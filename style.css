@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #f0d58e; /* Desert-like background color */
+    overflow-y: scroll;
+}
+
+section {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+html {
+    scroll-snap-type: y mandatory;
+}
