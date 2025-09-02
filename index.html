@@ -1,63 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAAD $SQ8</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-        section {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0d58e; /* Desert-like background color */
-            scroll-snap-align: start;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        /* Optional: Make it full-page scrollable sections */
-        html {
-            scroll-snap-type: y mandatory;
-            overflow-y: scroll;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAAD $SQ8</title>
+  <style>
+    :root{
+      --desert:#f0d58e;
+      --sand:#eacb78;
+      --brown:#8c5b2a;
+      --card-bg: rgba(255,255,255,0.85);
+    }
+    *{box-sizing:border-box}
+    html{
+      scroll-snap-type:y mandatory;
+      overflow-y:scroll;
+    }
+    body{
+      margin:0;
+      padding:0;
+      font-family:sans-serif;
+      background:#fff;
+      color:#1a1a1a;
+    }
+    section{
+      width:100%;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background-color:var(--desert);
+      scroll-snap-align:start;
+      padding:24px;
+    }
+    img{max-width:100%;height:auto;display:block}
+
+    /* ---------- First page split layout ---------- */
+    .hero-wrap{
+      width:100%;
+      max-width:1400px;
+      display:grid;
+      grid-template-columns:1.1fr 1fr;     /* image left, dApp right */
+      gap:28px;
+      align-items:stretch;
+    }
+    .hero-left{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* The themed sandbox “card” that contains the dApp */
+    .dapp-sandbox{
+      position:relative;
+      border-radius:24px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75)),
+        url("assets/General backgroud.png") center/cover no-repeat;
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.2),
+        inset 0 0 0 2px rgba(140,91,42,0.2);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      padding:16px;
+      border:4px solid var(--sand);
+    }
+    .dapp-sandbox::before{
+      /* subtle sunburst/glow rim for desert vibe */
+      content:"";
+      position:absolute; inset:-2px;
+      pointer-events:none;
+      background:radial-gradient(ellipse at 20% 15%, rgba(255,230,140,0.5), transparent 60%);
+      mix-blend-mode:screen;
+    }
+    .dapp-header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      padding:8px 12px;
+      background:linear-gradient(180deg, rgba(250,240,210,0.9), rgba(255,255,255,0.6));
+      border-radius:16px;
+      border:1px solid rgba(140,91,42,0.25);
+      margin-bottom:10px;
+    }
+    .dapp-title{
+      font-weight:800; letter-spacing:0.4px; color:var(--brown);
+    }
+    .chip{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      background:#fff4cf; border:1px solid rgba(140,91,42,0.25); color:#7a4c1e;
+    }
+
+    /* iframe itself */
+    .dapp-frame{
+      width:100%;
+      height:calc(100vh - 200px);  /* keeps the card full-height without overflow */
+      min-height:520px;
+      border:0;
+      border-radius:14px;
+      background:var(--card-bg);
+      box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
+    }
+
+    /* Responsive: stack on small screens */
+    @media (max-width: 980px){
+      .hero-wrap{ grid-template-columns:1fr; }
+      .dapp-frame{ height:65vh; min-height:520px; }
+    }
+  </style>
 </head>
 <body>
-    <section>
+
+  <!-- ---------- Page 1: split hero + dApp sandbox ---------- -->
+  <section>
+    <div class="hero-wrap">
+      <div class="hero-left">
         <img src="assets/page 1.png" alt="page 1">
-    </section>
-    <section>
-        <img src="assets/page 2.png" alt="page 2">
-    </section>
-    <section>
-        <img src="assets/page 3.png" alt="page 3">
-    </section>
-    <section>
-        <img src="assets/PREGNANCY.png" alt="1. PREGNANCY">
-    </section>
-    <section>
-        <img src="assets/birth.png" alt="2. birth">
-    </section>
-    <section>
-        <img src="assets/growth.png" alt="3. growth">
-    </section>
-    <section>
-        <img src="assets/FAQ.png" alt="Frequently Asked Questions">
-    </section>
-    <section>
-        <img src="assets/TOKENIMICS.png" alt="Our Tokennomics">
-    </section>
-    <section>
-        <img src="assets/last slide.png" alt="socials">
-    </section>
+      </div>
+
+      <aside class="dapp-sandbox" aria-label="SAADverse Presale dApp sandbox">
+        <div class="dapp-header">
+          <div class="dapp-title">SAADverse Presale dApp</div>
+          <div class="chip">$SQ8 • Base</div>
+        </div>
+
+        <!--
+          We embed your live dApp with an iframe.
+          Sandbox/allow list lets wallet popups & scripts work while staying isolated.
+          If your dApp needs extra permissions later, add them to 'allow' below.
+        -->
+        <iframe
+          class="dapp-frame"
+          src="https://dr-pampersmuffin.github.io/saadverse-dapp/"
+          title="SAADverse Presale dApp"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-popups-to-escape-sandbox allow-downloads"
+          allow="clipboard-write; payment; web-share"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ---------- Remaining pages unchanged ---------- -->
+  <section>
+    <img src="assets/page 2.png" alt="page 2">
+  </section>
+  <section>
+    <img src="assets/page 3.png" alt="page 3">
+  </section>
+  <section>
+    <img src="assets/PREGNANCY.png" alt="1. PREGNANCY">
+  </section>
+  <section>
+    <img src="assets/birth.png" alt="2. birth">
+  </section>
+  <section>
+    <img src="assets/growth.png" alt="3. growth">
+  </section>
+  <section>
+    <img src="assets/FAQ.png" alt="Frequently Asked Questions">
+  </section>
+  <section>
+    <img src="assets/TOKENIMICS.png" alt="Our Tokennomics">
+  </section>
+  <section>
+    <img src="assets/last slide.png" alt="socials">
+  </section>
+
 </body>
 </html>
