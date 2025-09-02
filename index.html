@@ -9,8 +9,8 @@
       --desert:#f0d58e;
       --sand:#eacb78;
       --brown:#8c5b2a;
-      --dapp-w: 40vw;         /* width of the dApp sandbox on desktop */
-      --dapp-h: 78vh;         /* height of the dApp sandbox on desktop */
+      --dapp-w: 40vw;
+      --dapp-h: 78vh;
     }
     *{box-sizing:border-box}
     html{ scroll-snap-type:y mandatory; overflow-y:scroll; }
@@ -25,10 +25,10 @@
       background-color:var(--desert);
       scroll-snap-align:start;
       position:relative;
-      padding:0;  /* full-bleed first page */
+      padding:0;
     }
 
-    /* ---------- Page 1: full image + overlaid dApp on right ---------- */
+    /* ---------- Page 1: full image + overlaid dApp on the right ---------- */
     .hero-full{
       position:relative;
       width:100%;
@@ -38,11 +38,12 @@
     .hero-full > img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit:cover;            /* keeps image filling the screen */
+      object-fit:cover;             /* fill the screen */
+      object-position: top center;  /* keep the TOP visible (no top crop) */
       display:block;
     }
 
-    /* Themed sandbox overlay */
+    /* Themed sandbox overlay (first page only) */
     .dapp-sandbox{
       position:absolute;
       top:50%;
@@ -56,7 +57,7 @@
       padding:14px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75)),
-        url("assets/General%20backgroud.png") center/cover no-repeat;
+        url("assets/General backgroud.png") center/cover no-repeat;
       border:4px solid var(--sand);
       box-shadow:0 24px 50px rgba(0,0,0,0.28), inset 0 0 0 2px rgba(140,91,42,0.18);
       display:flex; flex-direction:column;
@@ -85,15 +86,18 @@
       box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
     }
 
-    /* Other pages keep your original style */
+    /* Other pages: ensure NO borders / outlines */
     .page{
       background-color:var(--desert);
-      padding:24px;
+      padding:0;
       display:flex; flex-direction:column; justify-content:center; align-items:center;
     }
-    .page img{ max-width:100%; height:auto; display:block; }
+    .page img{
+      max-width:100%; height:auto; display:block;
+      border:0; outline:0; box-shadow:none;
+    }
 
-    /* Mobile: put the dApp at bottom, full-width */
+    /* Mobile: dApp at bottom, full-width */
     @media (max-width: 980px){
       :root{ --dapp-w: 92vw; --dapp-h: 68vh; }
       .dapp-sandbox{
@@ -107,7 +111,7 @@
 </head>
 <body>
 
-  <!-- Page 1: full image with overlaid dApp on the right -->
+  <!-- Page 1 -->
   <section>
     <div class="hero-full">
       <img src="assets/page 1.png" alt="page 1 (full screen)">
@@ -129,7 +133,7 @@
     </div>
   </section>
 
-  <!-- Remaining pages unchanged, images fill their sections -->
+  <!-- Remaining pages (no borders) -->
   <section class="page">
     <img src="assets/page 2.png" alt="page 2">
   </section>
