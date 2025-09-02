@@ -25,50 +25,30 @@
             background: url('assets/page 1.png') no-repeat center center;
             background-size: cover;
         }
-        /* Treasure chest styling */
-        .treasure-chest {
+        /* Themed button for the dApp */
+        .dapp-button {
             position: absolute;
-            top: 55%; /* Adjusted up as per previous request */
-            left: 70%; /* Further right as per previous request */
-            transform: translateX(-30%);
-            width: 200px;
-            height: 150px;
-            background-color: #d4a017; /* Goldish desert sand color */
-            border: 6px solid #8b5a2b; /* Darker brown border */
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 2px 4px #f0e68c; /* 3D effect */
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            overflow: hidden;
-        }
-        .treasure-chest::before {
-            content: "🏜️ Enter the SAADverse Presale 🏜️";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
+            top: 55%; /* Moved up from 70% to 55% */
+            left: 70%; /* Remains further right */
+            transform: translateX(-30%); /* Adjusted to balance the new left position */
+            padding: 15px 30px;
             font-size: 18px;
             font-weight: bold;
+            color: #fff;
+            background-color: #d4a017; /* Goldish desert sand color */
+            border: 4px solid #8b5a2b; /* Darker brown border for texture */
+            border-radius: 10px;
+            cursor: pointer;
             text-shadow: 2px 2px 4px #000;
-            z-index: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
         }
-        .treasure-chest::after {
-            content: "";
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 20px solid #8b5a2b; /* Lid effect */
-            z-index: 2;
+        .dapp-button:hover {
+            transform: translateX(-30%) scale(1.1);
+            background-color: #b8860b; /* Darker gold on hover */
         }
-        .treasure-chest:hover {
-            transform: translateX(-30%) scale(1.05);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 4px 6px #f0e68c;
+        .dapp-button::before {
+            content: "🏜️ Enter the SAADverse Presale 🏜️";
         }
         img {
             display: none; /* Hide the img tag since we're using it as background */
@@ -80,15 +60,12 @@
         }
         /* Mobile adjustments */
         @media (max-width: 768px) {
-            .treasure-chest {
-                top: 65%;
-                left: 50%;
+            .dapp-button {
+                top: 65%; /* Adjusted for mobile */
+                left: 50%; /* Center on mobile */
                 transform: translateX(-50%);
-                width: 150px;
-                height: 120px;
-            }
-            .treasure-chest::before {
                 font-size: 16px;
+                padding: 10px 20px;
             }
         }
     </style>
@@ -96,7 +73,7 @@
 <body>
     <section id="first-section">
         <img src="assets/page 1.png" alt="page 1" style="display:none;"> <!-- Hidden for reference -->
-        <a href="https://dr-pampersmuffin.github.io/saadverse-dapp/" target="_blank" class="treasure-chest"></a>
+        <a href="https://dr-pampersmuffin.github.io/saadverse-dapp/" target="_blank" class="dapp-button"></a>
     </section>
     <section>
         <img src="assets/page 2.png" alt="page 2">
