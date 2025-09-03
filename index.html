@@ -18,7 +18,8 @@
 
     section{
       width:100%;
-      min-height:100vh;
+      min-height:100dvh;           /* use dynamic vh to avoid mobile bottom cut */
+      min-height:100vh;            /* fallback */
       display:flex;
       justify-content:center;
       align-items:center;
@@ -28,19 +29,22 @@
       padding:0;
     }
 
-    /* ---------- Page 1: full image + overlaid dApp on the right ---------- */
+    /* ---------- Page 1: show the FULL image (no crop) + dApp on right ---------- */
     .hero-full{
       position:relative;
       width:100%;
-      height:100vh;
-      overflow:hidden;
+      height:100dvh;               /* full visible viewport height */
+      height:100vh;                /* fallback */
+      overflow:visible;            /* don't clip the image at the bottom */
+      background-color:var(--desert);
     }
     .hero-full > img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit:cover;             /* fill the screen */
-      object-position: top center;  /* keep the TOP visible (no top crop) */
+      object-fit:contain;          /* <<< ensure no cropping */
+      object-position:center;      /* center the full image */
       display:block;
+      background-color:var(--desert); /* letterbox color (matches theme) */
     }
 
     /* Themed sandbox overlay (first page only) */
@@ -86,7 +90,7 @@
       box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
     }
 
-    /* Other pages: ensure NO borders / outlines */
+    /* Other pages: unchanged — no borders/outlines */
     .page{
       background-color:var(--desert);
       padding:0;
@@ -133,7 +137,7 @@
     </div>
   </section>
 
-  <!-- Remaining pages (no borders) -->
+  <!-- Remaining pages (perfect as-is) -->
   <section class="page">
     <img src="assets/page 2.png" alt="page 2">
   </section>
