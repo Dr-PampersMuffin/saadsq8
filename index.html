@@ -18,8 +18,8 @@
 
     section{
       width:100%;
-      min-height:100dvh;           /* use dynamic vh to avoid mobile bottom cut */
-      min-height:100vh;            /* fallback */
+      min-height:100dvh;
+      min-height:100vh;
       display:flex;
       justify-content:center;
       align-items:center;
@@ -29,25 +29,32 @@
       padding:0;
     }
 
-    /* ---------- Page 1: show the FULL image (no crop) + dApp on right ---------- */
+    /* ---------- Page 1: hero image + dApp ---------- */
     .hero-full{
       position:relative;
       width:100%;
-      height:100dvh;               /* full visible viewport height */
-      height:100vh;                /* fallback */
-      overflow:visible;            /* don't clip the image at the bottom */
+      height:100dvh;
+      height:100vh;
+      overflow:hidden;
       background-color:var(--desert);
     }
     .hero-full > img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit:contain;          /* <<< ensure no cropping */
-      object-position:center;      /* center the full image */
+      object-fit:cover;          /* default: fill with no side bars */
+      object-position:center;
       display:block;
-      background-color:var(--desert); /* letterbox color (matches theme) */
     }
 
-    /* Themed sandbox overlay (first page only) */
+    /* Mobile: show whole image (no crop, may side-bar) */
+    @media (max-width: 768px){
+      .hero-full > img{
+        object-fit:contain;
+        background-color:var(--desert);
+      }
+    }
+
+    /* dApp sandbox */
     .dapp-sandbox{
       position:absolute;
       top:50%;
@@ -90,7 +97,7 @@
       box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
     }
 
-    /* Other pages: unchanged — no borders/outlines */
+    /* Other pages unchanged */
     .page{
       background-color:var(--desert);
       padding:0;
@@ -137,7 +144,7 @@
     </div>
   </section>
 
-  <!-- Remaining pages (perfect as-is) -->
+  <!-- Remaining pages -->
   <section class="page">
     <img src="assets/page 2.png" alt="page 2">
   </section>
