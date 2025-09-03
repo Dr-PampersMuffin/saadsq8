@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SAAD $SQ8</title>
   <style>
@@ -13,48 +13,41 @@
       --dapp-h: 78vh;
     }
     *{box-sizing:border-box}
-    html{ scroll-snap-type:y mandatory; overflow-y:scroll; }
-    body{ margin:0; font-family:sans-serif; color:#1a1a1a; }
+    html{scroll-snap-type:y mandatory; overflow-y:scroll;}
+    body{margin:0; font-family:sans-serif; color:#1a1a1a;}
 
     section{
       width:100%;
-      min-height:100dvh;
+      min-height:100dvh;            /* mobile-safe viewport height */
       min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
+      display:flex; justify-content:center; align-items:center;
       background-color:var(--desert);
       scroll-snap-align:start;
-      position:relative;
-      padding:0;
+      position:relative; padding:0;
     }
 
-    /* ---------- Page 1: hero image + dApp ---------- */
+    /* ---------- Page 1: NO-CROP hero ---------- */
     .hero-full{
       position:relative;
       width:100%;
       height:100dvh;
       height:100vh;
-      overflow:hidden;
+      display:flex;                 /* center the image naturally */
+      justify-content:center;
+      align-items:center;
       background-color:var(--desert);
+      overflow:visible;             /* ensure nothing is clipped */
     }
-    .hero-full > img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;          /* default: fill with no side bars */
-      object-position:center;
+    .hero-img{
+      max-width:100%;
+      max-height:100%;
+      width:auto;                   /* keep aspect ratio */
+      height:auto;                  /* keep aspect ratio */
       display:block;
+      /* Any leftover space becomes “side bars” or “top/bottom bars” (not a crop) */
     }
 
-    /* Mobile: show whole image (no crop, may side-bar) */
-    @media (max-width: 768px){
-      .hero-full > img{
-        object-fit:contain;
-        background-color:var(--desert);
-      }
-    }
-
-    /* dApp sandbox */
+    /* Themed sandbox overlay (first page only) */
     .dapp-sandbox{
       position:absolute;
       top:50%;
@@ -90,23 +83,14 @@
     .dapp-frame{
       flex:1 1 auto;
       width:100%;
-      border:0;
-      border-radius:12px;
-      margin-top:10px;
+      border:0; border-radius:12px; margin-top:10px;
       background:rgba(255,255,255,0.85);
       box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
     }
 
-    /* Other pages unchanged */
-    .page{
-      background-color:var(--desert);
-      padding:0;
-      display:flex; flex-direction:column; justify-content:center; align-items:center;
-    }
-    .page img{
-      max-width:100%; height:auto; display:block;
-      border:0; outline:0; box-shadow:none;
-    }
+    /* Other pages unchanged — borderless full images */
+    .page{background-color:var(--desert); padding:0; display:flex; flex-direction:column; justify-content:center; align-items:center;}
+    .page img{max-width:100%; height:auto; display:block; border:0; outline:0; box-shadow:none;}
 
     /* Mobile: dApp at bottom, full-width */
     @media (max-width: 980px){
@@ -114,8 +98,7 @@
       .dapp-sandbox{
         right:50%;
         transform:translate(50%, 0);
-        top:auto; bottom:14px;
-        min-width:0;
+        top:auto; bottom:14px; min-width:0;
       }
     }
   </style>
@@ -125,8 +108,7 @@
   <!-- Page 1 -->
   <section>
     <div class="hero-full">
-      <img src="assets/page 1.png" alt="page 1 (full screen)">
-
+      <img class="hero-img" src="assets/page 1.png" alt="page 1 (no crop)">
       <aside class="dapp-sandbox" aria-label="SAADverse Presale dApp sandbox">
         <div class="dapp-header">
           <div>SAADverse Presale dApp</div>
@@ -145,30 +127,14 @@
   </section>
 
   <!-- Remaining pages -->
-  <section class="page">
-    <img src="assets/page 2.png" alt="page 2">
-  </section>
-  <section class="page">
-    <img src="assets/page 3.png" alt="page 3">
-  </section>
-  <section class="page">
-    <img src="assets/PREGNANCY.png" alt="1. PREGNANCY">
-  </section>
-  <section class="page">
-    <img src="assets/birth.png" alt="2. birth">
-  </section>
-  <section class="page">
-    <img src="assets/growth.png" alt="3. growth">
-  </section>
-  <section class="page">
-    <img src="assets/FAQ.png" alt="Frequently Asked Questions">
-  </section>
-  <section class="page">
-    <img src="assets/TOKENIMICS.png" alt="Our Tokennomics">
-  </section>
-  <section class="page">
-    <img src="assets/last slide.png" alt="socials">
-  </section>
+  <section class="page"><img src="assets/page 2.png" alt="page 2"></section>
+  <section class="page"><img src="assets/page 3.png" alt="page 3"></section>
+  <section class="page"><img src="assets/PREGNANCY.png" alt="1. PREGNANCY"></section>
+  <section class="page"><img src="assets/birth.png" alt="2. birth"></section>
+  <section class="page"><img src="assets/growth.png" alt="3. growth"></section>
+  <section class="page"><img src="assets/FAQ.png" alt="Frequently Asked Questions"></section>
+  <section class="page"><img src="assets/TOKENIMICS.png" alt="Our Tokennomics"></section>
+  <section class="page"><img src="assets/last slide.png" alt="socials"></section>
 
 </body>
 </html>
