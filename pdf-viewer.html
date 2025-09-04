@@ -5,22 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Document — SAAD $SQ8</title>
   <style>
-    :root{
-      --bg-url: url('assets/General backgroud.png'); /* default desert background */
-    }
-
+   
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #111; }
-
-    /* Background */
-    .backdrop {
-      position: fixed; inset: 0;
-      background-image: var(--bg-url);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      z-index: -1;
-    }
 
     /* Top bar */
     .topbar {
@@ -68,8 +55,7 @@
   </style>
 </head>
 <body>
-  <div class="backdrop" aria-hidden="true"></div>
-
+  
   <div class="topbar">
     <div class="group">
       <a class="btn" href="index.html">← Home</a>
@@ -77,9 +63,9 @@
     </div>
     <div class="group">
       <!-- Quick-switch buttons for your three docs -->
-      <a class="btn" href="pdf-viewer.html?title=Whitepaper&pdf=assets/Whitepaper.pdf&bg=assets/General%20backgroud.png" rel="noopener">Whitepaper</a>
-      <a class="btn" href="pdf-viewer.html?title=Disclaimer&pdf=assets/Disclaimer.pdf&bg=assets/General%20backgroud.png" rel="noopener">Disclaimer</a>
-      <a class="btn" href="pdf-viewer.html?title=Contact%20Us&pdf=assets/contact_us.pdf&bg=assets/General%20backgroud.png" rel="noopener">Contact&nbsp;Us</a>
+      <a class="btn" href="pdf-viewer.html?title=Whitepaper&pdf=assets/Whitepaper.png&bg=assets/General%20backgroud.png" rel="noopener">Whitepaper</a>
+      <a class="btn" href="pdf-viewer.html?title=Disclaimer&pdf=assets/Disclaimer.png&bg=assets/General%20backgroud.png" rel="noopener">Disclaimer</a>
+      <a class="btn" href="pdf-viewer.html?title=Contact%20Us&pdf=assets/contact_us.png&bg=assets/General%20backgroud.png" rel="noopener">Contact&nbsp;Us</a>
       <a class="btn" id="downloadBtn" href="#" target="_blank" rel="noopener">Download PDF</a>
     </div>
   </div>
@@ -95,18 +81,13 @@
       const p = new URLSearchParams(location.search);
       const pdf   = p.get('pdf')   || '';
       const title = p.get('title') || 'Document';
-      const bg    = p.get('bg')    || '';
-
+      
       const isRelative = (s) => s && !/^(https?:)?\/\//i.test(s);
 
       // Set title
       document.title = `${title} — SAAD $SQ8`;
       document.getElementById('docTitle').textContent = title;
 
-      // Set background (optional override)
-      if (isRelative(bg)) {
-        document.documentElement.style.setProperty('--bg-url', `url('${bg}')`);
-      }
 
       // Set frame and download link
       const frame = document.getElementById('pdfFrame');
@@ -119,7 +100,7 @@
       } else {
         frame.outerHTML =
           '<div style="display:grid;place-items:center;height:100%;padding:20px;text-align:center;">' +
-          '<p style="max-width:40ch;">No PDF specified. Use <code>?pdf=assets/Whitepaper.pdf&amp;title=Whitepaper</code>.</p>' +
+          '<p style="max-width:40ch;">No PDF specified. Use <code>?pdf=assets/Whitepaper.png&amp;title=Whitepaper</code>.</p>' +
           '</div>';
         dl.style.display = 'none';
       }
