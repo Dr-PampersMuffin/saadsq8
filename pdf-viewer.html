@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Viewer — SAAD $SQ8</title>
   <style>
-    :root{
-      --max-stage-w: 1100px;
-      --stage-h: 85vh;
-    }
     *{ box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -46,46 +42,51 @@
     }
     .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); background:#fff; }
 
-    /* Stage */
-    .wrap {
-      flex: 1;
-      padding: 20px;
-      display: grid;
-      place-items: center;
-    }
-    .stage {
-      width: min(var(--max-stage-w), 94vw);
-      height: var(--stage-h);
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 14px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-    }
-
-    /* Image mode */
-    .stage img {
+    /* Layout wrapper below topbar */
+    main.viewer {
+      flex: 1 1 auto;
       width: 100%;
-      height: 100%;
-      object-fit: contain; /* keep full image visible, no cropping */
       display: block;
-      background: #fff;
+      margin: 0;
+      padding: 0;
     }
 
-    /* PDF mode */
-    .stage iframe {
+    /* ---------- IMAGE MODE (scroll the full tall image) ---------- */
+    .image-stage {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      /* no fixed height here — allow page to scroll naturally */
+      background: #fff;
+    }
+    .image-stage img {
+      display: block;
+      width: 100vw;   /* fill full viewport width */
+      max-width: 100vw;
+      height: auto;   /* natural height so you can scroll */
+      margin: 0 auto;
+      image-rendering: auto;
+    }
+
+    /* ---------- PDF MODE (full viewport iframe) ---------- */
+    .pdf-stage {
+      width: 100%;
+      height: calc(100vh - 52px); /* viewport minus topbar (approx) */
+      background: #fff;
+    }
+    .pdf-stage iframe {
       width: 100%;
       height: 100%;
       border: 0;
+      display: block;
       background: #fff;
     }
 
     /* Small screens */
     @media (max-width: 480px){
-      :root{ --stage-h: 78vh; }
       .btn { font-size: 14px; }
+      .pdf-stage { height: calc(100vh - 54px); }
     }
   </style>
 </head>
@@ -100,10 +101,8 @@
     </div>
   </div>
 
-  <main class="wrap">
-    <section class="stage" id="stage">
-      <!-- Filled by script with <img> or <iframe> -->
-    </section>
+  <main class="viewer" id="viewerRoot">
+    <!-- Filled by script with image or pdf stage -->
   </main>
 
   <script>
@@ -118,12 +117,12 @@
       document.title = `${title} — SAAD $SQ8`;
       document.getElementById('docTitle').textContent = title;
 
-      const stage = document.getElementById('stage');
+      const root = document.getElementById('viewerRoot');
       const dl = document.getElementById('downloadBtn');
 
       if (!isRelative(fileParam)) {
-        stage.innerHTML =
-          '<div style="padding:20px;text-align:center;max-width:40ch;">' +
+        root.innerHTML =
+          '<div style="padding:20px;text-align:center;max-width:40ch;margin:20px auto;background:#fff;border-radius:12px;border:1px solid rgba(0,0,0,0.1)">' +
           'No file specified or unsupported URL. Use ' +
           '<code>?file=assets/Whitepaper.png&amp;title=Whitepaper</code>.' +
           '</div>';
@@ -141,18 +140,36 @@
       const isPdf   = /\.pdf$/.test(lower);
 
       if (isImage) {
+        const stage = document.createElement('div');
+        stage.className = 'image-stage';
+
         const img = document.createElement('img');
         img.alt = title;
         img.src = fileParam;
-        stage.replaceChildren(img);
+
+        // Optional: guard against loading failure
+        img.onerror = () => {
+          stage.innerHTML =
+            '<div style="padding:20px;text-align:center;max-width:40ch;margin:20px auto;">' +
+            'Failed to load image. Check the path and filename casing.' +
+            '</div>';
+        };
+
+        stage.appendChild(img);
+        root.replaceChildren(stage);
       } else if (isPdf) {
+        const stage = document.createElement('div');
+        stage.className = 'pdf-stage';
+
         const iframe = document.createElement('iframe');
         iframe.title = 'Document';
         iframe.src = `${fileParam}#toolbar=1&navpanes=0&view=FitH`;
-        stage.replaceChildren(iframe);
+
+        stage.appendChild(iframe);
+        root.replaceChildren(stage);
       } else {
-        stage.innerHTML =
-          '<div style="padding:20px;text-align:center;max-width:40ch;">' +
+        root.innerHTML =
+          '<div style="padding:20px;text-align:center;max-width:40ch;margin:20px auto;background:#fff;border-radius:12px;border:1px solid rgba(0,0,0,0.1)">' +
           'Unsupported file type. Please use PNG/JPG/WEBP/SVG or PDF.' +
           '</div>';
         dl.style.display = 'none';
