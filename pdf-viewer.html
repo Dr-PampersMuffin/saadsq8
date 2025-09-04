@@ -1,106 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Document — SAAD $SQ8</title>
+  <title>Viewer — SAAD $SQ8</title>
   <style>
-   
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #111; }
+    :root{
+      --max-stage-w: 1100px;
+      --stage-h: 85vh;
+    }
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #f7f7f7;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
     /* Top bar */
     .topbar {
       position: sticky; top: 0;
-      display: flex; gap: 12px; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
       padding: 10px 14px;
-      background: rgba(255, 245, 200, 0.9);
-      border-bottom: 2px solid rgba(0,0,0,0.15);
-      backdrop-filter: blur(6px);
+      background: #222;
+      color: #facc15;
+      border-bottom: 2px solid #000;
       z-index: 10;
     }
     .group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .title { font-weight: 900; color: #8c5b2a; letter-spacing: .3px; }
-
+    .title { font-weight: 900; letter-spacing: .3px; color: #facc15; }
     .btn {
       text-decoration: none;
       font-weight: 700;
-      color: #7a4c1e;
+      color: #111;
       padding: 6px 10px;
       border-radius: 8px;
       background: #fff3bd;
-      border: 1px solid rgba(0,0,0,0.1);
-      transition: transform .15s ease, box-shadow .15s ease, background .2s, border-color .2s;
+      border: 1px solid rgba(0,0,0,0.15);
+      transition: transform .15s ease, box-shadow .15s ease, background .2s;
     }
     .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); background:#fff; }
 
-    /* Viewer card */
-    .wrap { display: grid; place-items: center; padding: 20px; }
-    .card {
-      width: min(1000px, 92vw);
-      height: min(85vh, 1200px);
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 16px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-      overflow: hidden;
+    /* Stage */
+    .wrap {
+      flex: 1;
+      padding: 20px;
+      display: grid;
+      place-items: center;
     }
-    .pdf-frame { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+    .stage {
+      width: min(var(--max-stage-w), 94vw);
+      height: var(--stage-h);
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
 
+    /* Image mode */
+    .stage img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* keep full image visible, no cropping */
+      display: block;
+      background: #fff;
+    }
+
+    /* PDF mode */
+    .stage iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
+    }
+
+    /* Small screens */
     @media (max-width: 480px){
-      .card { height: 78vh; }
+      :root{ --stage-h: 78vh; }
       .btn { font-size: 14px; }
     }
   </style>
 </head>
 <body>
-  
   <div class="topbar">
     <div class="group">
       <a class="btn" href="index.html">← Home</a>
-      <span class="title" id="docTitle">Document</span>
+      <span class="title" id="docTitle">Viewer</span>
     </div>
     <div class="group">
-      <!-- Quick-switch buttons for your three docs -->
-      <a class="btn" href="pdf-viewer.html?title=Whitepaper&pdf=assets/Whitepaper.png&bg=assets/General%20backgroud.png" rel="noopener">Whitepaper</a>
-      <a class="btn" href="pdf-viewer.html?title=Disclaimer&pdf=assets/Disclaimer.png&bg=assets/General%20backgroud.png" rel="noopener">Disclaimer</a>
-      <a class="btn" href="pdf-viewer.html?title=Contact%20Us&pdf=assets/contact_us.png&bg=assets/General%20backgroud.png" rel="noopener">Contact&nbsp;Us</a>
-      <a class="btn" id="downloadBtn" href="#" target="_blank" rel="noopener">Download PDF</a>
+      <a class="btn" id="downloadBtn" href="#" target="_blank" rel="noopener">Download</a>
     </div>
   </div>
 
   <main class="wrap">
-    <section class="card">
-      <iframe id="pdfFrame" class="pdf-frame" title="PDF viewer"></iframe>
+    <section class="stage" id="stage">
+      <!-- Filled by script with <img> or <iframe> -->
     </section>
   </main>
 
   <script>
     (function () {
       const p = new URLSearchParams(location.search);
-      const pdf   = p.get('pdf')   || '';
-      const title = p.get('title') || 'Document';
-      
-      const isRelative = (s) => s && !/^(https?:)?\/\//i.test(s);
+      const fileParam = p.get('file') || '';  // e.g. assets/WHITEPAPER.png
+      const title = p.get('title') || 'Viewer';
 
-      // Set title
+      // basic safety: only allow relative paths (no http/https)
+      const isRelative = (s) => !!s && !/^(https?:)?\/\//i.test(s);
+
       document.title = `${title} — SAAD $SQ8`;
       document.getElementById('docTitle').textContent = title;
 
-
-      // Set frame and download link
-      const frame = document.getElementById('pdfFrame');
+      const stage = document.getElementById('stage');
       const dl = document.getElementById('downloadBtn');
 
-      if (isRelative(pdf)) {
-        frame.src = `${pdf}#toolbar=1&navpanes=0&view=FitH`;
-        dl.href = pdf;
-        dl.download = '';
+      if (!isRelative(fileParam)) {
+        stage.innerHTML =
+          '<div style="padding:20px;text-align:center;max-width:40ch;">' +
+          'No file specified or unsupported URL. Use ' +
+          '<code>?file=assets/Whitepaper.png&amp;title=Whitepaper</code>.' +
+          '</div>';
+        dl.style.display = 'none';
+        return;
+      }
+
+      // set download
+      dl.href = fileParam;
+      dl.download = '';
+
+      // Detect type by extension
+      const lower = fileParam.toLowerCase();
+      const isImage = /\.(png|jpe?g|webp|gif|svg)$/.test(lower);
+      const isPdf   = /\.pdf$/.test(lower);
+
+      if (isImage) {
+        const img = document.createElement('img');
+        img.alt = title;
+        img.src = fileParam;
+        stage.replaceChildren(img);
+      } else if (isPdf) {
+        const iframe = document.createElement('iframe');
+        iframe.title = 'Document';
+        iframe.src = `${fileParam}#toolbar=1&navpanes=0&view=FitH`;
+        stage.replaceChildren(iframe);
       } else {
-        frame.outerHTML =
-          '<div style="display:grid;place-items:center;height:100%;padding:20px;text-align:center;">' +
-          '<p style="max-width:40ch;">No PDF specified. Use <code>?pdf=assets/Whitepaper.png&amp;title=Whitepaper</code>.</p>' +
+        stage.innerHTML =
+          '<div style="padding:20px;text-align:center;max-width:40ch;">' +
+          'Unsupported file type. Please use PNG/JPG/WEBP/SVG or PDF.' +
           '</div>';
         dl.style.display = 'none';
       }
