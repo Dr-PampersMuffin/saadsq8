@@ -12,115 +12,114 @@
       --dapp-w: 40vw;
       --dapp-h: 78vh;
     }
-
-    *{ box-sizing:border-box }
-    html{
-      scroll-snap-type:y mandatory;
-      overflow-y:scroll;
-      scroll-padding-top:40px; /* make snap respect the sticky ticker height */
-    }
+    *{box-sizing:border-box}
+    html{ scroll-snap-type:y mandatory; overflow-y:scroll; }
     body{ margin:0; font-family:sans-serif; color:#1a1a1a; }
-
-    /* ───── Sticky moving ticker ───── */
-    .ticker-bar{
-      position:sticky; top:0; z-index:9999;
-      height:40px; width:100%; overflow:hidden;
-      background:#facc15; color:#000; font-weight:800;
-      border-bottom:2px solid #000; white-space:nowrap;
-    }
-    .ticker-track{
-      display:inline-block;
-      padding-left:100%;
-      animation:ticker-scroll 25s linear infinite;
-    }
-    .ticker-item{
-      display:inline-block; padding:0 4rem;
-      line-height:40px; font-size:1rem;
-    }
-    @keyframes ticker-scroll{
-      0%{ transform:translateX(0) }
-      100%{ transform:translateX(-100%) }
-    }
 
     section{
       width:100%;
       min-height:100dvh;
-      display:flex; justify-content:center; align-items:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
       background-color:var(--desert);
       scroll-snap-align:start;
-      position:relative; padding:0;
+      position:relative;
+      padding:0;
     }
 
-    /* ───── Page 1 hero + sandbox ───── */
-    .hero-full{ position:relative; width:100%; height:100dvh; }
+    /* ---------- Page 1: force image to fill with no crop/margins ---------- */
+    .hero-full{
+      position:relative;
+      width:100%;
+      height:100dvh;
+    }
     .hero-full > img{
-      width:100%; height:100%;
-      display:block; object-fit:fill; /* fills without margins (may stretch) */
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:fill;      /* stretch to fill both width + height */
+      margin:0;
+      padding:0;
     }
 
+    /* dApp sandbox */
     .dapp-sandbox{
-      position:absolute; top:50%; right:24px; transform:translateY(-50%);
-      width:var(--dapp-w); height:var(--dapp-h);
-      min-width:360px; min-height:520px;
-      border-radius:22px; padding:14px;
+      position:absolute;
+      top:50%;
+      right:24px;
+      transform:translateY(-50%);
+      width:var(--dapp-w);
+      height:var(--dapp-h);
+      min-width:360px;
+      min-height:520px;
+      border-radius:22px;
+      padding:14px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75)),
         url("assets/General backgroud.png") center/cover no-repeat;
       border:4px solid var(--sand);
       box-shadow:0 24px 50px rgba(0,0,0,0.28), inset 0 0 0 2px rgba(140,91,42,0.18);
-      display:flex; flex-direction:column; overflow:hidden;
+      display:flex; flex-direction:column;
+      overflow:hidden;
     }
     .dapp-header{
-      display:flex; align-items:center; justify-content:center;
+      display:flex; align-items:center; justify-content:space-between;
       gap:10px; padding:8px 10px;
-      background:linear-gradient(90deg, #7f1d1d, #b91c1c, #7f1d1d);
-      border:2px solid #facc15; border-radius:14px;
-      color:#facc15; font-weight:900; font-size:1.1rem; letter-spacing:1px;
-      text-transform:uppercase;
-      text-shadow:0 0 6px #000, 0 0 12px #dc2626;
-      animation:pulseGlow 2s infinite;
+      background:linear-gradient(180deg, rgba(250,240,210,0.9), rgba(255,255,255,0.6));
+      border:1px solid rgba(140,91,42,0.25);
+      border-radius:12px;
+      color:var(--brown); font-weight:800; letter-spacing:.3px;
       z-index:2;
     }
-    @keyframes pulseGlow{
-      0%,100%{ text-shadow:0 0 6px #000, 0 0 12px #dc2626; }
-      50%{ text-shadow:0 0 10px #000, 0 0 20px #f87171; }
+    .chip{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      background:#fff4cf; border:1px solid rgba(140,91,42,0.25); color:#7a4c1e;
     }
     .dapp-frame{
-      flex:1 1 auto; width:100%;
-      border:0; border-radius:12px; margin-top:10px;
+      flex:1 1 auto;
+      width:100%;
+      border:0;
+      border-radius:12px;
+      margin-top:10px;
       background:rgba(255,255,255,0.85);
       box-shadow:inset 0 0 0 1px rgba(140,91,42,0.15);
     }
 
-    /* ───── Other pages (unchanged) ───── */
-    .page{ background-color:var(--desert); padding:0; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-    .page img{ max-width:100%; height:auto; display:block; border:0; outline:0; box-shadow:none; }
+    /* Other pages unchanged */
+    .page{
+      background-color:var(--desert);
+      padding:0;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+    }
+    .page img{
+      max-width:100%; height:auto; display:block;
+      border:0; outline:0; box-shadow:none;
+    }
 
     /* Mobile: dApp at bottom */
     @media (max-width: 980px){
       :root{ --dapp-w: 92vw; --dapp-h: 68vh; }
-      .dapp-sandbox{ right:50%; transform:translate(50%, 0); top:auto; bottom:14px; min-width:0; }
+      .dapp-sandbox{
+        right:50%;
+        transform:translate(50%, 0);
+        top:auto; bottom:14px;
+        min-width:0;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- 🔥 Sticky yellow moving ticker at the very top -->
-  <div class="ticker-bar">
-    <div class="ticker-track">
-      <div class="ticker-item">🔥 Presale LIVE – Join before Phase 1 ends!</div>
-      <div class="ticker-item">🚀 Limited supply of $SQ8 – Don’t miss out!</div>
-      <div class="ticker-item">⚡ Enter at Your Own Risk! ⚡</div>
-      <div class="ticker-item">🌍 Built on Base – Fast, Secure, Low Fees!</div>
-    </div>
-  </div>
 
   <!-- Page 1 -->
   <section>
     <div class="hero-full">
       <img src="assets/page 1.png" alt="page 1 (full stretch)">
       <aside class="dapp-sandbox" aria-label="SAADverse Presale dApp sandbox">
-        <div class="dapp-header"><div class="headline">⚡ Enter at Your Own Risk! ⚡</div></div>
+        <div class="dapp-header">
+          <div>SAADverse Presale dApp</div>
+          <div class="chip">$SQ8 • Base</div>
+        </div>
         <iframe
           class="dapp-frame"
           src="https://dr-pampersmuffin.github.io/saadverse-dapp/"
@@ -141,42 +140,7 @@
   <section class="page"><img src="assets/growth.png" alt="3. growth"></section>
   <section class="page"><img src="assets/FAQ.png" alt="Frequently Asked Questions"></section>
   <section class="page"><img src="assets/TOKENIMICS.png" alt="Our Tokennomics"></section>
-  <section class="page last-page">
-  <!-- Top-left icon strip -->
-  <div class="corner-icons">
-    <!-- Whitepaper (typographic: 📄) -->
-    <a class="icon-btn" href="/whitepaper.html" target="_blank" rel="noopener" aria-label="Whitepaper" title="Whitepaper">
-      <span>📄</span>
-    </a>
-
-    <!-- Disclaimer (typographic: ⚠️) -->
-    <a class="icon-btn" href="/disclaimer.html" target="_blank" rel="noopener" aria-label="Disclaimer" title="Disclaimer">
-      <span>⚠️</span>
-    </a>
-
-    <!-- Telegram (SVG logo) -->
-    <a class="icon-btn" href="https://t.me/YourTelegramLink" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M9.04 15.49 8.9 19.3c.41 0 .58-.18.79-.4l1.93-1.87 4 2.93c.73.4 1.26.2 1.46-.68l2.64-12.37c.27-1.25-.45-1.74-1.24-1.43L3.2 10.1c-1.2.47-1.18 1.15-.2 1.46l4.2 1.31 9.76-6.16c.46-.28.88-.13.54.18z"/>
-      </svg>
-    </a>
-
-    <!-- X (Twitter) logo (SVG) -->
-    <a class="icon-btn" href="https://x.com/YourXHandle" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X (Twitter)">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M18.244 2H21L14.61 9.31 22 22h-6.24l-4.36-7.2L6.2 22H3l6.86-7.61L2 2h6.36l4 6.63L18.244 2Zm-1.09 18h1.67L8.93 4H7.2l9.954 16Z"/>
-      </svg>
-    </a>
-
-    <!-- Contact Us (scroll/letter: 📜) -->
-    <a class="icon-btn" href="/contact.html" target="_blank" rel="noopener" aria-label="Contact Us" title="Contact Us">
-      <span>📜</span>
-    </a>
-  </div>
-
-  <img src="assets/last slide.png" alt="socials">
-</section>
-
+  <section class="page"><img src="assets/last slide.png" alt="socials"></section>
 
 </body>
 </html>
