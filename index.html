@@ -119,28 +119,55 @@
       .dapp-sandbox{ right:50%; transform:translate(50%, 0); top:auto; bottom:14px; min-width:0; }
     }
 
-    /* ───── Coin rain overlay ───── */
-    .coin-rain{
-      position:fixed;
-      top:0; left:0;
-      width:100%; height:100%;
-      pointer-events:none;   /* allow clicks through */
-      overflow:hidden;
-      z-index:5000;
-    }
-    .coin{
-      position:absolute;
-      width:40px; height:40px;
-      animation: fall linear forwards, spin linear infinite;
-    }
-    @keyframes fall{
-      from{ transform:translateY(-60px) rotate(0deg); opacity:1; }
-      to{ transform:translateY(100vh) rotate(360deg); opacity:0.8; }
-    }
-    @keyframes spin{
-      from{ transform:rotate(0deg); }
-      to{ transform:rotate(360deg); }
-    }
+  /* ───── Coin rain overlay ───── */
+.coin-rain{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:5000; /* under your ticker if ticker has 9999 */
+}
+
+/* One element, two animations that update CSS vars.
+   We then compose them in a single transform. */
+.coin{
+  position:absolute;
+  width:40px;
+  height:40px;
+  background: url("assets/coin.png") center/contain no-repeat;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+  opacity: 0.9;
+
+  /* animation variables */
+  --ty: -60px;      /* translateY */
+  --rot: 0deg;      /* rotation */
+
+  /* compose both animations into one transform */
+  transform: translateY(var(--ty)) rotate(var(--rot));
+  will-change: transform, opacity;
+
+  animation-name: coin-fall, coin-rotate;
+  animation-timing-function: linear, linear;
+  animation-iteration-count: infinite, infinite;
+}
+
+/* vertical fall updates --ty only */
+@keyframes coin-fall {
+  from { --ty: -80px; opacity: 0.0; }
+  to   { --ty: 110vh; opacity: 0.85; }
+}
+
+/* rotation updates --rot only */
+@keyframes coin-rotate {
+  from { --rot: 0deg; }
+  to   { --rot: 360deg; }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .coin{ animation: none; }
+}
+
   </style>
 </head>
 <body>
@@ -197,23 +224,56 @@
     <img src="assets/last slide.png" alt="socials">
   </section>
 
-  <script>
-    // Coin rain spawner
-    const container = document.getElementById("coinRain");
-    function spawnCoin(){
-      const coin = document.createElement("img");
-      coin.src = "assets/coin.png";
-      coin.className = "coin";
-      const size = Math.random()*30 + 20; // 20–50px
-      coin.style.width = size+"px";
-      coin.style.height = size+"px";
-      coin.style.left = Math.random()*100+"%";
-      coin.style.animationDuration = (5+Math.random()*5)+"s"; // 5–10s fall
-      container.appendChild(coin);
-      setTimeout(()=> coin.remove(), 12000);
-    }
-    setInterval(spawnCoin, 700); // every 0.7s
-  </script>
+ <script>
+(function(){
+  const container = document.getElementById("coinRain");
+  if (!container) return;
+
+  const isMobile = matchMedia('(max-width: 768px)').matches;
+  const COUNT = isMobile ? 16 : 32;
+
+  const rnd = (min, max) => Math.random() * (max - min) + min;
+
+  function spawnCoin() {
+    const el = document.createElement('div');
+    el.className = 'coin';
+
+    // horizontal start (allow a tiny offscreen start)
+    el.style.left = rnd(-5, 100) + 'vw';
+
+    // random size
+    const size = rnd(isMobile ? 28 : 34, isMobile ? 54 : 72);
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+
+    // durations and delay
+    const fallDur = rnd(10, 18);   // slower fall
+    const spinDur = rnd(8, 16);
+    const delay   = rnd(0, 12);
+
+    // apply durations/delays for both animations
+    el.style.animationDuration = `${fallDur}s, ${spinDur}s`;
+    el.style.animationDelay    = `${delay}s, ${delay/3}s`;
+
+    container.appendChild(el);
+
+    // cleanup after it falls past the viewport
+    const lifespan = (fallDur + delay + 2) * 1000;
+    setTimeout(() => el.remove(), lifespan);
+  }
+
+  // seed a bunch initially
+  for (let i = 0; i < COUNT; i++) spawnCoin();
+
+  // then continue spawning slowly
+  const interval = setInterval(spawnCoin, 900);
+
+  // pause when tab hidden to save battery
+  document.addEventListener('visibilitychange', () => {
+    container.style.display = document.hidden ? 'none' : 'block';
+  });
+})();
+</script>
 
 </body>
 </html>
