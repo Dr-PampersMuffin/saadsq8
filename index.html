@@ -17,7 +17,7 @@
     html{
       scroll-snap-type:y mandatory;
       overflow-y:scroll;
-      scroll-padding-top:40px; /* make snap respect the sticky ticker height */
+      scroll-padding-top:40px;
     }
     body{ margin:0; font-family:sans-serif; color:#1a1a1a; }
 
@@ -55,7 +55,7 @@
     .hero-full{ position:relative; width:100%; height:100dvh; }
     .hero-full > img{
       width:100%; height:100%;
-      display:block; object-fit:fill; /* fills without margins (may stretch) */
+      display:block; object-fit:fill;
     }
 
     .dapp-sandbox{
@@ -105,50 +105,47 @@
       transform: translateY(-50%);
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:14px;
       z-index:10;
     }
-    /* Free, big image buttons (no box) */
-.icon-btn{
-  display: inline-block;
-  padding: 0;                 /* no inner padding */
-  background: transparent;    /* no background box */
-  border: 0;                  /* no border */
-  box-shadow: none;           /* no shadow */
-  width: auto; height: auto;  /* size by image */
-  transition: transform .15s ease;
-}
-.icon-btn:hover{
-  transform: translateY(-2px) scale(1.04);
-}
+    .icon-btn{ display:inline-block; background:transparent; border:0; }
+    .icon-btn img{ width:200px; height:auto; display:block; }
 
-/* Make the actual images big and crisp */
-.icon-btn img{
-  display: block;
-  width: 200px;     /* <- adjust to taste (e.g., 96–128px) */
-  height: auto;
-  object-fit: contain;
-}
-
-/* Slightly bigger spacing between icons */
-.last-icons{ gap: 14px; }
-
-
-    /* Mobile tweak: nudge strip a bit higher */
     @media (max-width: 768px){
       .last-icons{ top:42%; left:12px; }
     }
-
-    /* Mobile: dApp at bottom */
     @media (max-width: 980px){
       :root{ --dapp-w: 92vw; --dapp-h: 68vh; }
       .dapp-sandbox{ right:50%; transform:translate(50%, 0); top:auto; bottom:14px; min-width:0; }
+    }
+
+    /* ───── Coin rain overlay ───── */
+    .coin-rain{
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      pointer-events:none;   /* allow clicks through */
+      overflow:hidden;
+      z-index:5000;
+    }
+    .coin{
+      position:absolute;
+      width:40px; height:40px;
+      animation: fall linear forwards, spin linear infinite;
+    }
+    @keyframes fall{
+      from{ transform:translateY(-60px) rotate(0deg); opacity:1; }
+      to{ transform:translateY(100vh) rotate(360deg); opacity:0.8; }
+    }
+    @keyframes spin{
+      from{ transform:rotate(0deg); }
+      to{ transform:rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-  <!-- 🔥 Sticky yellow moving ticker at the very top -->
+  <!-- 🔥 Sticky yellow moving ticker -->
   <div class="ticker-bar">
     <div class="ticker-track">
       <div class="ticker-item">🔥 Presale LIVE – Join before Phase 1 ends!</div>
@@ -157,6 +154,9 @@
       <div class="ticker-item">🌍 Built on Base – Fast, Secure, Low Fees!</div>
     </div>
   </div>
+
+  <!-- Coin rain overlay -->
+  <div class="coin-rain" id="coinRain"></div>
 
   <!-- Page 1 -->
   <section>
@@ -185,54 +185,35 @@
   <section class="page"><img src="assets/FAQ.png" alt="Frequently Asked Questions"></section>
   <section class="page"><img src="assets/TOKENIMICS.png" alt="Our Tokennomics"></section>
 
- <!-- LAST PAGE with left-middle icons -->
-<section class="page last-page">
-  <!-- Icon strip -->
-  <div class="last-icons">
-    <!-- Whitepaper -->
-    <a class="icon-btn"
-       href="pdf-viewer.html?title=Whitepaper&file=assets/Whitepaper.png"
-       target="_blank" rel="noopener"
-       aria-label="Whitepaper" title="Whitepaper">
-      <img src="assets/Button1.png" alt="Whitepaper" />
-    </a>
+  <!-- LAST PAGE -->
+  <section class="page last-page">
+    <div class="last-icons">
+      <a class="icon-btn" href="pdf-viewer.html?title=Whitepaper&file=assets/Whitepaper.png" target="_blank"><img src="assets/Button1.png" alt="Whitepaper"></a>
+      <a class="icon-btn" href="pdf-viewer.html?title=Disclaimer&file=assets/Disclaimer.png" target="_blank"><img src="assets/Button2.png" alt="Disclaimer"></a>
+      <a class="icon-btn" href="https://t.me/YourTelegramLink" target="_blank"><img src="assets/Button4.png" alt="Telegram"></a>
+      <a class="icon-btn" href="https://x.com/YourXHandle" target="_blank"><img src="assets/Button5.png" alt="Twitter"></a>
+      <a class="icon-btn" href="pdf-viewer.html?title=Contact%20Us&file=assets/contact_us.png" target="_blank"><img src="assets/Button3.png" alt="Contact Us"></a>
+    </div>
+    <img src="assets/last slide.png" alt="socials">
+  </section>
 
-    <!-- Disclaimer -->
-    <a class="icon-btn"
-       href="pdf-viewer.html?title=Disclaimer&file=assets/Disclaimer.png"
-       target="_blank" rel="noopener"
-       aria-label="Disclaimer" title="Disclaimer">
-      <img src="assets/Button2.png" alt="Disclaimer" />
-    </a>
-
-    <!-- Telegram -->
-    <a class="icon-btn"
-       href="https://t.me/YourTelegramLink"
-       target="_blank" rel="noopener"
-       aria-label="Telegram" title="Telegram">
-      <img src="assets/Button4.png" alt="Telegram" />
-    </a>
-
-    <!-- X (Twitter) -->
-    <a class="icon-btn"
-       href="https://x.com/YourXHandle"
-       target="_blank" rel="noopener"
-       aria-label="X (Twitter)" title="X (Twitter)">
-      <img src="assets/Button5.png" alt="Twitter" />
-    </a>
-
-    <!-- Contact Us -->
-    <a class="icon-btn"
-       href="pdf-viewer.html?title=Contact%20Us&file=assets/contact_us.png"
-       target="_blank" rel="noopener"
-       aria-label="Contact Us" title="Contact Us">
-      <img src="assets/Button3.png" alt="Contact Us" />
-    </a>
-  </div>
-
-  <img src="assets/last slide.png" alt="socials">
-</section>
-
+  <script>
+    // Coin rain spawner
+    const container = document.getElementById("coinRain");
+    function spawnCoin(){
+      const coin = document.createElement("img");
+      coin.src = "assets/coin.png";
+      coin.className = "coin";
+      const size = Math.random()*30 + 20; // 20–50px
+      coin.style.width = size+"px";
+      coin.style.height = size+"px";
+      coin.style.left = Math.random()*100+"%";
+      coin.style.animationDuration = (5+Math.random()*5)+"s"; // 5–10s fall
+      container.appendChild(coin);
+      setTimeout(()=> coin.remove(), 12000);
+    }
+    setInterval(spawnCoin, 700); // every 0.7s
+  </script>
 
 </body>
 </html>
