@@ -119,51 +119,36 @@
       .dapp-sandbox{ right:50%; transform:translate(50%, 0); top:auto; bottom:14px; min-width:0; }
     }
 
-  /* ───── Coin rain overlay ───── */
+ /* ===== COIN RAIN (always on top) ===== */
 .coin-rain{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:5000; /* under your ticker if ticker has 9999 */
+  position: fixed;
+  inset: 0;
+  pointer-events: none;   /* clicks pass through */
+  overflow: hidden;
+  z-index: 10000;         /* above your 9999 ticker */
 }
 
-/* One element, two animations that update CSS vars.
-   We then compose them in a single transform. */
 .coin{
-  position:absolute;
-  width:40px;
-  height:40px;
-  background: url("assets/coin.png") center/contain no-repeat;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
-  opacity: 0.9;
-
-  /* animation variables */
-  --ty: -60px;      /* translateY */
-  --rot: 0deg;      /* rotation */
-
-  /* compose both animations into one transform */
-  transform: translateY(var(--ty)) rotate(var(--rot));
+  position: absolute;
+  top: -20vh;               /* start above screen */
+  width: 48px;
+  height: 48px;
+  opacity: 0;
   will-change: transform, opacity;
-
-  animation-name: coin-fall, coin-rotate;
-  animation-timing-function: linear, linear;
-  animation-iteration-count: infinite, infinite;
+  animation-name: fallSpin;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
 
-/* vertical fall updates --ty only */
-@keyframes coin-fall {
-  from { --ty: -80px; opacity: 0.0; }
-  to   { --ty: 110vh; opacity: 0.85; }
+/* one animation does both: translate + rotate + fade-in */
+@keyframes fallSpin{
+  0%   { transform: translateY(-20vh) rotate(0deg);    opacity: 0;   }
+  10%  { opacity: .85; }
+  100% { transform: translateY(120vh) rotate(360deg);  opacity: .85; }
 }
 
-/* rotation updates --rot only */
-@keyframes coin-rotate {
-  from { --rot: 0deg; }
-  to   { --rot: 360deg; }
-}
-
-/* respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .coin{ animation: none; }
 }
@@ -224,56 +209,65 @@
     <img src="assets/last slide.png" alt="socials">
   </section>
 
- <script>
+<script>
 (function(){
-  const container = document.getElementById("coinRain");
-  if (!container) return;
+  const container = document.getElementById('coinRain');
+  if (!container) {
+    console.warn('coinRain container not found.');
+    return;
+  }
 
+  const IMG_SRC = 'assets/coin.png';         // <- path is case-sensitive on hosts
   const isMobile = matchMedia('(max-width: 768px)').matches;
-  const COUNT = isMobile ? 16 : 32;
+  const INITIAL = isMobile ? 14 : 28;        // how many to seed immediately
+  const INTERVAL_MS = 900;                   // how often to spawn new ones
 
   const rnd = (min, max) => Math.random() * (max - min) + min;
 
-  function spawnCoin() {
-    const el = document.createElement('div');
+  function spawn() {
+    const el = new Image();                  // <img>, easier to debug 404s
+    el.src = IMG_SRC;
     el.className = 'coin';
 
-    // horizontal start (allow a tiny offscreen start)
+    // if image 404s, show a gold placeholder disk so you can *see* the rain
+    el.onerror = () => {
+      el.removeAttribute('src');
+      el.style.background = 'radial-gradient(circle at 35% 35%, #ffd34d, #f4b400 65%, #a16d00)';
+      el.style.borderRadius = '50%';
+    };
+
+    // random horizontal start (allow slightly off-screen)
     el.style.left = rnd(-5, 100) + 'vw';
 
     // random size
-    const size = rnd(isMobile ? 28 : 34, isMobile ? 54 : 72);
+    const size = rnd(isMobile ? 28 : 40, isMobile ? 56 : 72);
     el.style.width = size + 'px';
     el.style.height = size + 'px';
 
-    // durations and delay
-    const fallDur = rnd(10, 18);   // slower fall
-    const spinDur = rnd(8, 16);
-    const delay   = rnd(0, 12);
-
-    // apply durations/delays for both animations
-    el.style.animationDuration = `${fallDur}s, ${spinDur}s`;
-    el.style.animationDelay    = `${delay}s, ${delay/3}s`;
+    // random duration & delay
+    const dur   = rnd(10, 18);               // slower fall
+    const delay = rnd(0, 10);
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = delay + 's';
 
     container.appendChild(el);
 
-    // cleanup after it falls past the viewport
-    const lifespan = (fallDur + delay + 2) * 1000;
-    setTimeout(() => el.remove(), lifespan);
+    // cleanup after it falls
+    setTimeout(() => el.remove(), (dur + delay + 1) * 1000);
   }
 
-  // seed a bunch initially
-  for (let i = 0; i < COUNT; i++) spawnCoin();
+  // seed some at load
+  for (let i = 0; i < INITIAL; i++) spawn();
+  // keep spawning
+  const timer = setInterval(spawn, INTERVAL_MS);
 
-  // then continue spawning slowly
-  const interval = setInterval(spawnCoin, 900);
-
-  // pause when tab hidden to save battery
+  // pause when hidden to save resources
   document.addEventListener('visibilitychange', () => {
     container.style.display = document.hidden ? 'none' : 'block';
   });
 })();
 </script>
+
 
 </body>
 </html>
