@@ -108,8 +108,15 @@
       gap:14px;
       z-index:10;
     }
+
+    /* All buttons identical size */
     .icon-btn{ display:inline-block; background:transparent; border:0; }
-    .icon-btn img{ width:210px; height:auto; display:block; }
+    .icon-btn img{
+      width:230px; 
+      height:80px;
+      object-fit:contain;
+      display:block;
+    }
 
     @media (max-width: 768px){
       .last-icons{ top:42%; left:12px; }
@@ -119,40 +126,34 @@
       .dapp-sandbox{ right:50%; transform:translate(50%, 0); top:auto; bottom:14px; min-width:0; }
     }
 
- /* ===== COIN RAIN (always on top) ===== */
-.coin-rain{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;   /* clicks pass through */
-  overflow: hidden;
-  z-index: 10000;         /* above your 9999 ticker */
-}
-
-.coin{
-  position: absolute;
-  top: -20vh;               /* start above screen */
-  width: 48px;
-  height: 48px;
-  opacity: 0;
-  will-change: transform, opacity;
-  animation-name: fallSpin;
-  animation-timing-function: linear;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
-}
-
-/* one animation does both: translate + rotate + fade-in */
-@keyframes fallSpin{
-  0%   { transform: translateY(-20vh) rotate(0deg);    opacity: 0;   }
-  10%  { opacity: .85; }
-  100% { transform: translateY(120vh) rotate(360deg);  opacity: .85; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .coin{ animation: none; }
-}
-
+    /* ===== COIN RAIN ===== */
+    .coin-rain{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 10000;
+    }
+    .coin{
+      position: absolute;
+      top: -20vh;
+      width: 48px; height: 48px;
+      opacity: 0;
+      will-change: transform, opacity;
+      animation-name: fallSpin;
+      animation-timing-function: linear;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+    }
+    @keyframes fallSpin{
+      0%   { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: .85; }
+      100% { transform: translateY(120vh) rotate(360deg); opacity: .85; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .coin{ animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -213,62 +214,41 @@
 <script>
 (function(){
   const container = document.getElementById('coinRain');
-  if (!container) {
-    console.warn('coinRain container not found.');
-    return;
-  }
+  if (!container) return;
 
-  const IMG_SRC = 'assets/coin.png';         // <- path is case-sensitive on hosts
+  const IMG_SRC = 'assets/coin.png';
   const isMobile = matchMedia('(max-width: 768px)').matches;
-  const INITIAL = isMobile ? 14 : 28;        // how many to seed immediately
-  const INTERVAL_MS = 900;                   // how often to spawn new ones
+  const INITIAL = isMobile ? 14 : 28;
+  const INTERVAL_MS = 900;
 
   const rnd = (min, max) => Math.random() * (max - min) + min;
 
   function spawn() {
-    const el = new Image();                  // <img>, easier to debug 404s
+    const el = new Image();
     el.src = IMG_SRC;
     el.className = 'coin';
-
-    // if image 404s, show a gold placeholder disk so you can *see* the rain
     el.onerror = () => {
       el.removeAttribute('src');
       el.style.background = 'radial-gradient(circle at 35% 35%, #ffd34d, #f4b400 65%, #a16d00)';
       el.style.borderRadius = '50%';
     };
-
-    // random horizontal start (allow slightly off-screen)
     el.style.left = rnd(-5, 100) + 'vw';
-
-    // random size
     const size = rnd(isMobile ? 28 : 40, isMobile ? 56 : 72);
     el.style.width = size + 'px';
     el.style.height = size + 'px';
-
-    // random duration & delay
-    const dur   = rnd(10, 18);               // slower fall
+    const dur   = rnd(10, 18);
     const delay = rnd(0, 10);
     el.style.animationDuration = dur + 's';
     el.style.animationDelay = delay + 's';
-
     container.appendChild(el);
-
-    // cleanup after it falls
     setTimeout(() => el.remove(), (dur + delay + 1) * 1000);
   }
-
-  // seed some at load
   for (let i = 0; i < INITIAL; i++) spawn();
-  // keep spawning
   const timer = setInterval(spawn, INTERVAL_MS);
-
-  // pause when hidden to save resources
   document.addEventListener('visibilitychange', () => {
     container.style.display = document.hidden ? 'none' : 'block';
   });
 })();
 </script>
-
-
 </body>
 </html>
