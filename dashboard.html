@@ -13,11 +13,8 @@
 
   <style>
     :root{
-      --bg: #0b0e12;
-      --card: #121720;
       --muted:#93a2b1;
       --primary:#22d3ee;
-      --accent:#8b5cf6;
       --good:#10b981;
       --warn:#f59e0b;
       --bad:#ef4444;
@@ -25,80 +22,72 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
- body {
-  margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  color:#e5edf5;
-  background:
-    radial-gradient(1200px 600px at 10% -20%, rgba(20,32,46,0.6) 0%, transparent 60%),
-    radial-gradient(1200px 600px at 110% 120%, rgba(33,25,55,0.6) 0%, transparent 60%);
-}
-      background-attachment: fixed, fixed, fixed;
-      background-repeat: no-repeat;
-      background-position: center, center, center;
-      background-size: cover, cover, auto;
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:#e5edf5;
+      background: transparent; /* no black background */
     }
     .wrap{max-width:1040px; margin:0 auto; padding:28px 16px 64px}
     header{
       display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px;
     }
-    .brand{
-      display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px;
-    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800}
     .brand img{width:40px; height:40px; display:block}
     .brand h1{font-size:20px; margin:0}
-    .net-pill{
-      font-size:12px; color:#111; background:#a7f3d0; border-radius:999px; padding:4px 10px; font-weight:800;
-    }
+    .net-pill{font-size:12px; color:#111; background:#a7f3d0; border-radius:999px; padding:4px 10px; font-weight:800}
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), var(--card);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px; padding:16px; box-shadow:0 10px 40px rgba(0,0,0,.35);
+      background:rgba(18, 23, 32, 0.35);
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:16px; padding:16px;
+      box-shadow:0 10px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .grid{display:grid; grid-template-columns: repeat(12,1fr); gap:14px;}
     .col-12{grid-column: span 12;}
     .col-6{grid-column: span 6;}
-    @media (max-width: 860px){
-      .col-6{grid-column: span 12;}
-    }
+    @media (max-width: 860px){.col-6{grid-column: span 12;}}
 
     .btn{
-      appearance:none; border:0; cursor:pointer; border-radius:12px; padding:12px 14px;
-      background: linear-gradient(180deg, #1f2937, #111827);
-      color:#e6f1fb; font-weight:800; letter-spacing:.25px;
-      border:1px solid rgba(255,255,255,.08);
+      border:0; cursor:pointer; border-radius:12px; padding:12px 14px;
+      background: rgba(255,255,255,0.1);
+      color:#e6f1fb; font-weight:800;
+      border:1px solid rgba(255,255,255,.2);
+      backdrop-filter: blur(6px);
       transition:.18s transform ease, .18s box-shadow ease;
     }
     .btn.primary{
       background:linear-gradient(90deg, var(--primary), #06b6d4);
-      color:#001015; border-color:transparent;
-      box-shadow: 0 0 0 0 var(--ring);
+      color:#001015;
     }
     .btn:hover{transform:translateY(-1px)}
     .btn:active{transform:translateY(0)}
-    .btn.small{padding:8px 10px; border-radius:10px; font-size:12px}
+    .btn.small{padding:8px 10px; font-size:12px}
 
     .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
     .muted{color:var(--muted)}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
-    .pill{padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.25px}
-    .pill.ok{background:rgba(16,185,129,.18); color:#c8ffe6; border:1px solid rgba(16,185,129,.35)}
-    .pill.warn{background:rgba(245,158,11,.18); color:#fff0c7; border:1px solid rgba(245,158,11,.4)}
-    .pill.bad{background:rgba(239,68,68,.18); color:#ffd9d9; border:1px solid rgba(239,68,68,.35)}
+    .pill{padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800}
+    .pill.ok{background:rgba(16,185,129,.25); color:#c8ffe6}
+    .pill.warn{background:rgba(245,158,11,.25); color:#fff0c7}
+    .pill.bad{background:rgba(239,68,68,.25); color:#ffd9d9}
 
     .kpi{
       display:flex; flex-direction:column; gap:4px; padding:14px; border-radius:12px;
-      background:rgba(255,255,255,.02); border:1px dashed rgba(255,255,255,.08);
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.15);
+      backdrop-filter: blur(8px);
     }
     .kpi .label{font-size:12px; color:var(--muted)}
     .kpi .val{font-size:22px; font-weight:900}
 
-    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); margin:14px 0}
-
+    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent); margin:14px 0}
     .notice{
-      font-size:12px; color:#a3b4c8; background:rgba(34,211,238,.08);
-      border:1px solid rgba(34,211,238,.25); padding:10px 12px; border-radius:10px;
-      word-break: break-word;
+      font-size:12px; color:#d1e4ff;
+      background:rgba(34,211,238,.12);
+      border:1px solid rgba(34,211,238,.25);
+      padding:10px 12px; border-radius:10px;
     }
     footer{margin-top:28px; text-align:center; color:#93a2b1; font-size:12px}
   </style>
