@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAAD $SQ8 Dashboard</title>
+  <meta name="robots" content="index, follow">
+  <meta name="description" content="SAAD $SQ8 Dashboard — view your purchased, claimed, and claimable tokens.">
+  <link rel="icon" type="image/png" href="assets/favicon-32x32.png" sizes="32x32">
+
+  <!-- Ethers v6 (browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.min.js"></script>
+
+  <style>
+    :root{
+      --bg: #0b0e12;
+      --card: #121720;
+      --muted:#93a2b1;
+      --primary:#22d3ee;
+      --accent:#8b5cf6;
+      --good:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --ring: rgba(34,211,238,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:#e5edf5; background:
+        radial-gradient(1200px 600px at 10% -20%, #14202e 0%, transparent 60%),
+        radial-gradient(1200px 600px at 110% 120%, #211937 0%, transparent 60%),
+        var(--bg);
+    }
+    .wrap{max-width:1040px; margin:0 auto; padding:28px 16px 64px}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px;
+    }
+    .brand img{width:40px; height:40px; display:block}
+    .brand h1{font-size:20px; margin:0}
+    .net-pill{
+      font-size:12px; color:#111; background:#a7f3d0; border-radius:999px; padding:4px 10px; font-weight:800;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), var(--card);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px; padding:16px; box-shadow:0 10px 40px rgba(0,0,0,.35);
+    }
+    .grid{display:grid; grid-template-columns: repeat(12,1fr); gap:14px;}
+    .col-12{grid-column: span 12;}
+    .col-6{grid-column: span 6;}
+    @media (max-width: 860px){
+      .col-6{grid-column: span 12;}
+    }
+
+    .btn{
+      appearance:none; border:0; cursor:pointer; border-radius:12px; padding:12px 14px;
+      background: linear-gradient(180deg, #1f2937, #111827);
+      color:#e6f1fb; font-weight:800; letter-spacing:.25px;
+      border:1px solid rgba(255,255,255,.08);
+      transition:.18s transform ease, .18s box-shadow ease;
+    }
+    .btn.primary{
+      background:linear-gradient(90deg, var(--primary), #06b6d4);
+      color:#001015; border-color:transparent;
+      box-shadow: 0 0 0 0 var(--ring);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .btn.small{padding:8px 10px; border-radius:10px; font-size:12px}
+
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .muted{color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .pill{padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.25px}
+    .pill.ok{background:rgba(16,185,129,.18); color:#c8ffe6; border:1px solid rgba(16,185,129,.35)}
+    .pill.warn{background:rgba(245,158,11,.18); color:#fff0c7; border:1px solid rgba(245,158,11,.4)}
+    .pill.bad{background:rgba(239,68,68,.18); color:#ffd9d9; border:1px solid rgba(239,68,68,.35)}
+
+    .kpi{
+      display:flex; flex-direction:column; gap:4px; padding:14px; border-radius:12px;
+      background:rgba(255,255,255,.02); border:1px dashed rgba(255,255,255,.08);
+    }
+    .kpi .label{font-size:12px; color:var(--muted)}
+    .kpi .val{font-size:22px; font-weight:900}
+
+    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); margin:14px 0}
+
+    .notice{
+      font-size:12px; color:#a3b4c8; background:rgba(34,211,238,.08);
+      border:1px solid rgba(34,211,238,.25); padding:10px 12px; border-radius:10px;
+    }
+    footer{margin-top:28px; text-align:center; color:#93a2b1; font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="assets/coin.png" alt="SQ8">
+        <div>
+          <h1>SAAD $SQ8 Dashboard</h1>
+          <div class="muted" style="font-size:12px;">Track your purchased, claimed & claimable tokens</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="net-pill">Base Mainnet</span>
+        <button id="btnConnect" class="btn primary">Connect Wallet</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="col-12 card">
+        <div class="row" style="justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div class="muted" style="font-size:12px;">Connected</div>
+            <div id="addr" class="mono" style="font-size:14px">—</div>
+          </div>
+          <div class="row">
+            <span id="statusBadge" class="pill warn">Not Connected</span>
+            <button id="btnRefresh" class="btn small">Refresh</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid">
+          <div class="col-6">
+            <div class="kpi">
+              <div class="label">Total Purchased (locked + claimed)</div>
+              <div id="kpiTotal" class="val">0 SQ8</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="kpi">
+              <div class="label">Unlocked</div>
+              <div id="kpiUnlocked" class="val">0 SQ8</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="kpi">
+              <div class="label">Claimed</div>
+              <div id="kpiClaimed" class="val">0 SQ8</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="kpi">
+              <div class="label">Claimable Now</div>
+              <div id="kpiClaimable" class="val">0 SQ8</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="gap:16px; align-items:flex-end;">
+          <div>
+            <div class="muted" style="font-size:12px;">Cliff (min)</div>
+            <div id="kpiCliff" class="mono">—</div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;">Duration (min)</div>
+            <div id="kpiDuration" class="mono">—</div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;">Claim start (UTC)</div>
+            <div id="kpiStart" class="mono">—</div>
+          </div>
+        </div>
+
+        <div id="note" class="notice" style="margin-top:14px; display:none;"></div>
+      </div>
+    </div>
+
+    <footer>© 2025 SAADverse — Base Mainnet</footer>
+  </div>
+
+  <script>
+    // ====== CONFIG ======
+    const CHAIN_ID_HEX = "0x2105"; // Base mainnet 8453
+    const RPC_URL = "https://mainnet.base.org";
+    const PRESALE_ADDRESS = "0x00ab2677723295F2d0A79cb68E1893f9707B409D";
+
+    // Minimal ABI for vestingInfo (matches your dApp)
+    const PRESALE_ABI = [
+      "function owner() view returns (address)",
+      "function vestingInfo(address) view returns (uint256 total, uint256 alreadyClaimed, uint256 unlocked, uint256 claimable, uint256 _claimStart, uint256 _cliff, uint256 _duration)"
+    ];
+
+    // ====== DOM ======
+    const $addr = document.getElementById("addr");
+    const $status = document.getElementById("statusBadge");
+    const $btnConnect = document.getElementById("btnConnect");
+    const $btnRefresh = document.getElementById("btnRefresh");
+    const $kTotal = document.getElementById("kpiTotal");
+    const $kUnlocked = document.getElementById("kpiUnlocked");
+    const $kClaimed = document.getElementById("kpiClaimed");
+    const $kClaimable = document.getElementById("kpiClaimable");
+    const $kCliff = document.getElementById("kpiCliff");
+    const $kDur = document.getElementById("kpiDuration");
+    const $kStart = document.getElementById("kpiStart");
+    const $note = document.getElementById("note");
+
+    const fmt18 = (wei) => (Number(wei) / 1e18).toLocaleString(undefined, {maximumFractionDigits: 6});
+
+    function setStatus(text, kind){
+      $status.textContent = text;
+      $status.className = "pill " + (kind || "ok");
+    }
+
+    async function ensureBase(){
+      if (!window.ethereum) throw new Error("No injected wallet.");
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const net = await provider.getNetwork();
+      if (Number(net.chainId) === 8453) return provider;
+
+      // try switch, then add if missing
+      try {
+        await window.ethereum.request({ method:"wallet_switchEthereumChain", params:[{ chainId: CHAIN_ID_HEX }]});
+      } catch (e){
+        if (e && e.code === 4902){
+          await window.ethereum.request({
+            method:"wallet_addEthereumChain",
+            params:[{
+              chainId: CHAIN_ID_HEX,
+              chainName:"Base",
+              nativeCurrency:{ name:"Base Ether", symbol:"ETH", decimals:18 },
+              rpcUrls:[RPC_URL],
+              blockExplorerUrls:["https://basescan.org"]
+            }]
+          });
+        } else {
+          throw e;
+        }
+      }
+      return new ethers.BrowserProvider(window.ethereum);
+    }
+
+    async function connect(){
+      try{
+        const provider = await ensureBase();
+        await provider.send("eth_requestAccounts", []);
+        const signer = await provider.getSigner();
+        const addr = await signer.getAddress();
+        $addr.textContent = addr;
+        setStatus("Connected", "ok");
+        await refresh(provider, addr);
+      }catch(e){
+        console.error(e);
+        setStatus("Not Connected", "bad");
+        $addr.textContent = "—";
+        $note.style.display = "block";
+        $note.textContent = e?.message || String(e);
+      }
+    }
+
+    async function refresh(existingProvider, existingAddr){
+      try{
+        const provider = existingProvider || await ensureBase();
+        const addr = existingAddr || (await (await provider.getSigner()).getAddress());
+
+        const contract = new ethers.Contract(PRESALE_ADDRESS, PRESALE_ABI, provider);
+        const v = await contract.vestingInfo(addr);
+
+        $kTotal.textContent     = fmt18(v.total) + " SQ8";
+        $kClaimed.textContent   = fmt18(v.alreadyClaimed) + " SQ8";
+        $kUnlocked.textContent  = fmt18(v.unlocked) + " SQ8";
+        $kClaimable.textContent = fmt18(v.claimable) + " SQ8";
+
+        const start = Number(v._claimStart||0);
+        const cliff = Number(v._cliff||0);
+        const dur   = Number(v._duration||0);
+
+        $kCliff.textContent = (cliff/60).toLocaleString() + " min";
+        $kDur.textContent   = (dur/60).toLocaleString() + " min";
+        $kStart.textContent = start ? new Date(start*1000).toISOString().replace(".000","").replace("T"," ")+" UTC" : "—";
+
+        $note.style.display = "none";
+      }catch(e){
+        console.error(e);
+        $note.style.display = "block";
+        $note.textContent = "Could not load vesting info: " + (e?.reason || e?.message || String(e));
+      }
+    }
+
+    // Wire up buttons
+    $btnConnect.addEventListener("click", connect);
+    $btnRefresh.addEventListener("click", () => connect());
+
+    // Try auto-connect if already authorized
+    (async () => {
+      if (window.ethereum){
+        try{
+          const accounts = await window.ethereum.request({ method:"eth_accounts" });
+          if (accounts && accounts.length){
+            await connect();
+          }
+        }catch{}
+        // refresh on chain/account change
+        window.ethereum.on?.("chainChanged", () => connect());
+        window.ethereum.on?.("accountsChanged", () => connect());
+      } else {
+        setStatus("Install Wallet", "warn");
+      }
+    })();
+  </script>
+</body>
+</html>
