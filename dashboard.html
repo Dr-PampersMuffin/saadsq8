@@ -26,7 +26,7 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:#e5edf5;
-      background: transparent; /* no black background */
+      background: transparent;
     }
     .wrap{max-width:1040px; margin:0 auto; padding:28px 16px 64px}
     header{
@@ -34,7 +34,10 @@
     }
     .brand{display:flex; align-items:center; gap:12px; font-weight:800}
     .brand img{width:40px; height:40px; display:block}
-    .brand h1{font-size:20px; margin:0}
+    .brand h1{
+      font-size:20px; margin:0;
+      color:#ff1a1a; /* 🔥 Red title */
+    }
     .net-pill{font-size:12px; color:#111; background:#a7f3d0; border-radius:999px; padding:4px 10px; font-weight:800}
     .card{
       background:rgba(18, 23, 32, 0.35);
@@ -124,47 +127,18 @@
         <div class="hr"></div>
 
         <div class="grid">
-          <div class="col-6">
-            <div class="kpi">
-              <div class="label">Total Purchased (locked + claimed)</div>
-              <div id="kpiTotal" class="val">0 SQ8</div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="kpi">
-              <div class="label">Unlocked</div>
-              <div id="kpiUnlocked" class="val">0 SQ8</div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="kpi">
-              <div class="label">Claimed</div>
-              <div id="kpiClaimed" class="val">0 SQ8</div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="kpi">
-              <div class="label">Claimable Now</div>
-              <div id="kpiClaimable" class="val">0 SQ8</div>
-            </div>
-          </div>
+          <div class="col-6"><div class="kpi"><div class="label">Total Purchased</div><div id="kpiTotal" class="val">0 SQ8</div></div></div>
+          <div class="col-6"><div class="kpi"><div class="label">Unlocked</div><div id="kpiUnlocked" class="val">0 SQ8</div></div></div>
+          <div class="col-6"><div class="kpi"><div class="label">Claimed</div><div id="kpiClaimed" class="val">0 SQ8</div></div></div>
+          <div class="col-6"><div class="kpi"><div class="label">Claimable Now</div><div id="kpiClaimable" class="val">0 SQ8</div></div></div>
         </div>
 
         <div class="hr"></div>
 
         <div class="row" style="gap:16px; align-items:flex-end;">
-          <div>
-            <div class="muted" style="font-size:12px;">Cliff (min)</div>
-            <div id="kpiCliff" class="mono">—</div>
-          </div>
-          <div>
-            <div class="muted" style="font-size:12px;">Duration (min)</div>
-            <div id="kpiDuration" class="mono">—</div>
-          </div>
-          <div>
-            <div class="muted" style="font-size:12px;">Claim start (UTC)</div>
-            <div id="kpiStart" class="mono">—</div>
-          </div>
+          <div><div class="muted" style="font-size:12px;">Cliff (min)</div><div id="kpiCliff" class="mono">—</div></div>
+          <div><div class="muted" style="font-size:12px;">Duration (min)</div><div id="kpiDuration" class="mono">—</div></div>
+          <div><div class="muted" style="font-size:12px;">Claim start (UTC)</div><div id="kpiStart" class="mono">—</div></div>
         </div>
 
         <div id="note" class="notice" style="margin-top:14px; display:none;"></div>
@@ -175,46 +149,24 @@
   </div>
 
   <script>
-    // ====== DYNAMIC BACKGROUND FROM ?file= OR ?bg= ======
+    // ====== BACKGROUND IMAGE LOADER ======
     (function applyDynamicBackground(){
       const params = new URLSearchParams(location.search);
-      const titleParam = params.get('title');
-      if (titleParam) {
-        document.title = `${titleParam} — SAAD $SQ8 Dashboard`;
-      }
+      const fileParam = params.get('file') || params.get('bg') || "assets/dashboard.png"; // default fallback
 
-      const fileParam = params.get('file') || params.get('bg');
-      if (!fileParam) return;
-
-      // Safety: keep within /assets
-      let path = fileParam.trim();
-      // allow raw filename like "dashboard.png"
-      if (!/^assets\//i.test(path)) {
-        path = 'assets/' + path.replace(/^\/+/, '');
-      }
-
-      // Preload to avoid flashing broken bg
       const img = new Image();
       img.onload = () => {
-        // Place the image as the bottom-most layer, then your gradients, then base color.
         document.body.style.background =
-          `url("${path}") center / cover no-repeat fixed,` +
-          `radial-gradient(1200px 600px at 10% -20%, #14202e 0%, transparent 60%),` +
-          `radial-gradient(1200px 600px at 110% 120%, #211937 0%, transparent 60%),` +
-          `var(--bg)`;
-        document.body.style.backgroundAttachment = 'fixed, fixed, fixed, fixed';
-        document.body.style.backgroundRepeat = 'no-repeat, no-repeat, no-repeat, no-repeat';
-        document.body.style.backgroundPosition = 'center, center, center, center';
-        document.body.style.backgroundSize = 'cover, cover, cover, auto';
+          `url("${fileParam}") center / cover no-repeat fixed`;
       };
       img.onerror = () => {
         const note = document.getElementById('note');
         if (note) {
           note.style.display = 'block';
-          note.textContent = `Background image not found: ${path}`;
+          note.textContent = `Background image not found: ${fileParam}`;
         }
       };
-      img.src = path;
+      img.src = fileParam;
     })();
 
     // ====== CONFIG ======
@@ -222,7 +174,6 @@
     const RPC_URL = "https://mainnet.base.org";
     const PRESALE_ADDRESS = "0x00ab2677723295F2d0A79cb68E1893f9707B409D";
 
-    // Minimal ABI for vestingInfo (matches your dApp)
     const PRESALE_ABI = [
       "function owner() view returns (address)",
       "function vestingInfo(address) view returns (uint256 total, uint256 alreadyClaimed, uint256 unlocked, uint256 claimable, uint256 _claimStart, uint256 _cliff, uint256 _duration)"
@@ -254,25 +205,15 @@
       const provider = new ethers.BrowserProvider(window.ethereum);
       const net = await provider.getNetwork();
       if (Number(net.chainId) === 8453) return provider;
-
-      // try switch, then add if missing
       try {
-        await window.ethereum.request({ method:"wallet_switchEthereumChain", params:[{ chainId: CHAIN_ID_HEX }]});
+        await window.ethereum.request({ method:"wallet_switchEthereumChain", params:[{ chainId: CHAIN_ID_HEX }]} );
       } catch (e){
         if (e && e.code === 4902){
           await window.ethereum.request({
             method:"wallet_addEthereumChain",
-            params:[{
-              chainId: CHAIN_ID_HEX,
-              chainName:"Base",
-              nativeCurrency:{ name:"Base Ether", symbol:"ETH", decimals:18 },
-              rpcUrls:[RPC_URL],
-              blockExplorerUrls:["https://basescan.org"]
-            }]
+            params:[{chainId: CHAIN_ID_HEX, chainName:"Base", nativeCurrency:{ name:"Base Ether", symbol:"ETH", decimals:18 }, rpcUrls:[RPC_URL], blockExplorerUrls:["https://basescan.org"]}]
           });
-        } else {
-          throw e;
-        }
+        } else { throw e; }
       }
       return new ethers.BrowserProvider(window.ethereum);
     }
@@ -299,23 +240,15 @@
       try{
         const provider = existingProvider || await ensureBase();
         const addr = existingAddr || (await (await provider.getSigner()).getAddress());
-
         const contract = new ethers.Contract(PRESALE_ADDRESS, PRESALE_ABI, provider);
         const v = await contract.vestingInfo(addr);
-
         $kTotal.textContent     = fmt18(v.total) + " SQ8";
         $kClaimed.textContent   = fmt18(v.alreadyClaimed) + " SQ8";
         $kUnlocked.textContent  = fmt18(v.unlocked) + " SQ8";
         $kClaimable.textContent = fmt18(v.claimable) + " SQ8";
-
-        const start = Number(v._claimStart||0);
-        const cliff = Number(v._cliff||0);
-        const dur   = Number(v._duration||0);
-
-        $kCliff.textContent = (cliff/60).toLocaleString() + " min";
-        $kDur.textContent   = (dur/60).toLocaleString() + " min";
-        $kStart.textContent = start ? new Date(start*1000).toISOString().replace(".000","").replace("T"," ")+" UTC" : "—";
-
+        $kCliff.textContent = (Number(v._cliff)/60).toLocaleString() + " min";
+        $kDur.textContent   = (Number(v._duration)/60).toLocaleString() + " min";
+        $kStart.textContent = v._claimStart ? new Date(Number(v._claimStart)*1000).toISOString().replace(".000","").replace("T"," ")+" UTC" : "—";
         $note.style.display = "none";
       }catch(e){
         console.error(e);
@@ -324,26 +257,8 @@
       }
     }
 
-    // Wire up buttons
     $btnConnect.addEventListener("click", connect);
     $btnRefresh.addEventListener("click", () => connect());
-
-    // Try auto-connect if already authorized
-    (async () => {
-      if (window.ethereum){
-        try{
-          const accounts = await window.ethereum.request({ method:"eth_accounts" });
-          if (accounts && accounts.length){
-            await connect();
-          }
-        }catch{}
-        // refresh on chain/account change
-        window.ethereum.on?.("chainChanged", () => connect());
-        window.ethereum.on?.("accountsChanged", () => connect());
-      } else {
-        setStatus("Install Wallet", "warn");
-      }
-    })();
   </script>
 </body>
 </html>
