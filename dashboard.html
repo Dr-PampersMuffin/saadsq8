@@ -25,14 +25,13 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:#e5edf5;
-      /* default background if no ?file is provided */
-      background:
-        radial-gradient(1200px 600px at 10% -20%, #14202e 0%, transparent 60%),
-        radial-gradient(1200px 600px at 110% 120%, #211937 0%, transparent 60%),
-        var(--bg);
+   body {
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:#e5edf5;
+  background: transparent; /* ✅ Let page bg-image show fully */
+}
+
       background-attachment: fixed, fixed, fixed;
       background-repeat: no-repeat;
       background-position: center, center, center;
