@@ -13,70 +13,76 @@
 
   <style>
     :root{
-      --muted:#93a2b1;
+      --muted:#c9d3de;
       --primary:#22d3ee;
-      --good:#10b981;
-      --warn:#f59e0b;
       --bad:#ef4444;
-      --ring: rgba(34,211,238,.25);
-      --panel-bg: rgba(18,23,32,0.28);   /* more transparent so bg art shows */
-      --panel-br: rgba(255,255,255,.14);
+      --panel-bg: rgba(0,0,0,0.45);      /* <- SAME transparency as your dApp */
+      --panel-br: rgba(255,255,255,.12);
+      --tile-bg: rgba(255,255,255,.05);
+      --tile-br: rgba(255,255,255,.10);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:#e5edf5;
-      background: transparent; /* we paint the bg image via JS below */
+      color:#f2f6fb;
+      background: transparent; /* background image applied by JS */
     }
 
-    /* Layout is narrower so the art is visible */
+    /* Smaller by default so background art shows */
     .wrap{
-      max-width: 760px;         /* smaller than before */
+      max-width: 520px;
       margin: 0 auto;
-      padding: 20px 12px 40px;
+      padding: 16px 10px 28px;
       background: transparent;
     }
-    /* Extra-compact mode via ?compact=1 */
+    /* Extra-compact via ?compact=1 */
     .wrap.compact{
-      max-width: 560px;
-      padding: 16px 10px 32px;
+      max-width: 420px;
+      padding: 12px 8px 22px;
     }
 
     header{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
     }
     .brand{display:flex; align-items:center; gap:10px; font-weight:800}
-    .brand img{width:36px; height:36px; display:block}
+    .brand img{width:32px; height:32px; display:block}
     .brand h1{
-      font-size:20px; margin:0;
-      color:#ff1a1a; /* 🔥 Red title */
+      font-size:18px; margin:0;
+      color:#ff1a1a; /* Title in red */
       text-shadow: 0 2px 10px rgba(0,0,0,.35);
+      letter-spacing:.2px;
+    }
+    .brand .sub{
+      margin-top:2px;
+      font-size:12px;
+      color:#ff1a1a; /* Subtitle in red as requested */
+      font-weight:700;
     }
     .net-pill{
-      font-size:12px; color:#111; background:#a7f3d0; border-radius:999px; padding:4px 10px; font-weight:800
+      font-size:11px; color:#111; background:#a7f3d0; border-radius:999px; padding:3px 8px; font-weight:800
     }
 
     .card{
       background: var(--panel-bg);
       border:1px solid var(--panel-br);
-      border-radius:16px; padding:12px;
+      border-radius:14px; padding:10px;
       box-shadow:0 10px 40px rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
-    .grid{display:grid; grid-template-columns: repeat(12,1fr); gap:12px;}
+    .grid{display:grid; grid-template-columns: repeat(12,1fr); gap:10px;}
     .col-12{grid-column: span 12;}
     .col-6{grid-column: span 6;}
-    @media (max-width: 860px){.col-6{grid-column: span 12;}}
+    @media (max-width: 640px){.col-6{grid-column: span 12;}}
 
     .btn{
-      border:0; cursor:pointer; border-radius:12px; padding:10px 12px;
+      border:0; cursor:pointer; border-radius:10px; padding:8px 10px;
       background: rgba(255,255,255,0.12);
-      color:#e6f1fb; font-weight:800; font-size:14px;
-      border:1px solid rgba(255,255,255,.2);
+      color:#e6f1fb; font-weight:800; font-size:12px;
+      border:1px solid rgba(255,255,255,.18);
       backdrop-filter: blur(4px);
       transition:.18s transform ease, .18s box-shadow ease, .18s background ease;
     }
@@ -84,43 +90,44 @@
       background:linear-gradient(90deg, var(--primary), #06b6d4);
       color:#001015;
     }
-    .btn.small{padding:7px 10px; font-size:12px}
+    .btn.small{padding:6px 8px; font-size:11px}
     .btn:hover{transform:translateY(-1px)}
     .btn:active{transform:translateY(0)}
 
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
     .muted{color:var(--muted)}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
-    .pill{padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800}
+    .pill{padding:3px 7px; border-radius:999px; font-size:11px; font-weight:800}
     .pill.ok{background:rgba(16,185,129,.25); color:#c8ffe6}
     .pill.warn{background:rgba(245,158,11,.25); color:#fff0c7}
     .pill.bad{background:rgba(239,68,68,.25); color:#ffd9d9}
 
     .kpi{
-      display:flex; flex-direction:column; gap:4px; padding:12px; border-radius:12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14);
-      backdrop-filter: blur(6px);
+      display:flex; flex-direction:column; gap:3px; padding:10px; border-radius:10px;
+      background: var(--tile-bg);
+      border:1px solid var(--tile-br);
+      backdrop-filter: blur(4px);
     }
-    .kpi .label{font-size:12px; color:var(--muted)}
+    .kpi .label{font-size:11px; color:var(--muted)}
     .kpi .val{
-      font-size:20px; font-weight:900;
-      transition: color .15s ease;
+      font-size:18px; font-weight:900; line-height:1.1;
+      transition: color .15s ease, text-shadow .15s ease;
+      color:#eaf2fb;
     }
     .kpi .val.nonzero{
-      color:#ff3b3b;             /* 🔴 KPI turns red when > 0 */
+      color:#ff3b3b;             /* Non-zero KPI turns red */
       text-shadow: 0 1px 10px rgba(255, 59, 59, .25);
     }
 
-    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); margin:12px 0}
+    .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); margin:10px 0}
     .notice{
-      font-size:12px; color:#d1e4ff;
+      font-size:11px; color:#d1e4ff;
       background:rgba(34,211,238,.12);
       border:1px solid rgba(34,211,238,.25);
-      padding:10px 12px; border-radius:10px;
+      padding:8px 10px; border-radius:8px;
       word-break: break-word;
     }
-    footer{margin-top:22px; text-align:center; color:#93a2b1; font-size:12px}
+    footer{margin-top:16px; text-align:center; color:#c4ced9; font-size:11px}
   </style>
 </head>
 <body>
@@ -130,7 +137,7 @@
         <img src="assets/coin.png" alt="SQ8">
         <div>
           <h1>SAAD $SQ8 Dashboard</h1>
-          <div class="muted" style="font-size:12px;">Track your purchased, claimed & claimable tokens</div>
+          <div class="sub">Track your purchased, claimed &amp; claimable tokens</div>
         </div>
       </div>
       <div class="row">
@@ -143,8 +150,8 @@
       <div class="col-12 card">
         <div class="row" style="justify-content:space-between; align-items:flex-start;">
           <div>
-            <div class="muted" style="font-size:12px;">Connected</div>
-            <div id="addr" class="mono" style="font-size:14px">—</div>
+            <div class="muted" style="font-size:11px;">Connected</div>
+            <div id="addr" class="mono" style="font-size:13px">—</div>
           </div>
           <div class="row">
             <span id="statusBadge" class="pill warn">Not Connected</span>
@@ -183,22 +190,22 @@
 
         <div class="hr"></div>
 
-        <div class="row" style="gap:14px; align-items:flex-end;">
+        <div class="row" style="gap:10px; align-items:flex-end;">
           <div>
-            <div class="muted" style="font-size:12px;">Cliff (min)</div>
-            <div id="kpiCliff" class="mono">—</div>
+            <div class="muted" style="font-size:11px;">Cliff (min)</div>
+            <div id="kpiCliff" class="mono" style="font-size:13px">—</div>
           </div>
           <div>
-            <div class="muted" style="font-size:12px;">Duration (min)</div>
-            <div id="kpiDuration" class="mono">—</div>
+            <div class="muted" style="font-size:11px;">Duration (min)</div>
+            <div id="kpiDuration" class="mono" style="font-size:13px">—</div>
           </div>
           <div>
-            <div class="muted" style="font-size:12px;">Claim start (UTC)</div>
-            <div id="kpiStart" class="mono">—</div>
+            <div class="muted" style="font-size:11px;">Claim start (UTC)</div>
+            <div id="kpiStart" class="mono" style="font-size:13px">—</div>
           </div>
         </div>
 
-        <div id="note" class="notice" style="margin-top:12px; display:none;"></div>
+        <div id="note" class="notice" style="margin-top:10px; display:none;"></div>
       </div>
     </div>
 
@@ -213,12 +220,16 @@
       if (titleParam) document.title = `${titleParam} — SAAD $SQ8 Dashboard`;
 
       // default to assets/dashboard.png if not provided
-      const fileParam = params.get('file') || params.get('bg') || "assets/dashboard.png";
+      let fileParam = params.get('file') || params.get('bg') || "assets/dashboard.png";
+
+      // If just a filename like "dashboard.png" was passed, keep it inside /assets
+      if (!/^assets\//i.test(fileParam)) {
+        fileParam = 'assets/' + fileParam.replace(/^\/+/, '');
+      }
 
       const img = new Image();
       img.onload = () => {
-        document.body.style.background =
-          `url("${fileParam}") center / cover no-repeat fixed`;
+        document.body.style.background = `url("${fileParam}") center / cover no-repeat fixed`;
       };
       img.onerror = () => {
         const note = document.getElementById('note');
