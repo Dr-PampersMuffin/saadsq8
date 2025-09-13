@@ -176,6 +176,37 @@
     <div class="hero-full">
       <img src="assets/page 1.png" alt="page 1 (full stretch)">
       <aside class="dapp-sandbox" aria-label="SAADverse Presale dApp sandbox">
+        <!-- Contract Address Overlay -->
+<div class="contract-overlay"
+     onclick="navigator.clipboard.writeText('0x3120B918b65613fC709272E26938352229c2E597')
+              .then(()=>alert('Contract copied to clipboard!'))">
+  📋 Contract: 0x3120B918b65613fC709272E26938352229c2E597
+</div>
+
+<style>
+.contract-overlay {
+  position: absolute;
+  top: 20px;                /* adjust for vertical placement above sandbox */
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(255, 255, 255, 0.2); /* translucent background like dashboard */
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: red;               /* red text to match dashboard title */
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: background 0.2s ease, transform 0.15s ease;
+  z-index: 2000;            /* above the dApp sandbox */
+}
+.contract-overlay:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateX(50%) scale(1.02);
+}
+</style>
+
         <div class="dapp-header"><div class="headline">⚡ Enter at Your Own Risk! ⚡</div></div>
         <iframe
           class="dapp-frame"
@@ -197,44 +228,7 @@
   <section class="page"><img src="assets/growth.png" alt="3. growth"></section>
   <section class="page"><img src="assets/FAQ.png" alt="Frequently Asked Questions"></section>
   <section class="page"><img src="assets/TOKENIMICS.png" alt="Our Tokennomics"></section>
-<!-- Copyable contract address overlay -->
-  <div class="copy-addr"
-       onclick="navigator.clipboard.writeText('0x3120B918b65613fC709272E26938352229c2E597')
-                .then(()=>alert('Copied to clipboard!'))">
-    📋 0x3120B918b65613fC709272E26938352229c2E597
-  </div>
-</section>
 
-<style>
-.page.tokenomics {
-  position: relative;
-  display: inline-block;
-}
-.page.tokenomics img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.copy-addr {
-  position: absolute;
-  bottom: 20px;               /* adjust to match placement in image */
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.85); /* same semi-transparent style as your dApp */
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-family: monospace;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  transition: background 0.2s ease;
-}
-.copy-addr:hover {
-  background: rgba(255,255,255,1);
-}
-</style>
   <!-- LAST PAGE -->
   <section class="page last-page">
     <div class="last-icons">
