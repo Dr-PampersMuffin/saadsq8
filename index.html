@@ -186,18 +186,18 @@
 <style>
 .contract-overlay {
   position: absolute;
-  top: 70px;                /* adjust for vertical placement above sandbox */
-  right: 50%;
-  transform: translateX(50%);
-  background: rgba(255, 255, 255, 0.2); /* translucent background like dashboard */
-  padding: 10px 16px;
-  border-radius: 10px;
+  top: 40px;                  /* adjust vertical position */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.15); /* translucent, slimmer look */
+  padding: 4px 10px;          /* 🔑 smaller padding = slimmer */
+  border-radius: 6px;         /* smaller radius for a tight pill shape */
   font-family: monospace;
-  font-size: 14px;
-  font-weight: bold;
-  color: red;               /* red text to match dashboard title */
+  font-size: 12px;            /* 🔑 smaller font size */
+  font-weight: 600;           /* keep bold but less chunky */
+  color: red;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 1px 3px rgba;
   transition: background 0.2s ease, transform 0.15s ease;
   z-index: 2000;            /* above the dApp sandbox */
 }
