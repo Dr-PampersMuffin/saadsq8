@@ -27,21 +27,12 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:#e5edf5;
-
-      /* default backdrop if no image param is provided */
-      background:
-        radial-gradient(1200px 600px at 10% -20%, rgba(20,32,46,0.75) 0%, transparent 60%),
-        radial-gradient(1200px 600px at 110% 120%, rgba(33,25,55,0.75) 0%, transparent 60%),
-        #0b0e12;
-      background-attachment: fixed, fixed, fixed;
-      background-repeat: no-repeat;
-      background-position: center, center, center;
-      background-size: cover, cover, auto;
-    }
+    body {
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:#ffffff; /* make font white */
+  background: url("assets/dashboard.png") center/cover no-repeat fixed;
+}
 
     /* Smaller, elegant “card” container so background art stays visible */
     .wrap{
@@ -103,12 +94,25 @@
     .pill.warn{background:rgba(245,158,11,.18); color:#fff0c7; border:1px solid rgba(245,158,11,.4)}
     .pill.bad{background:rgba(239,68,68,.18); color:#ffd9d9; border:1px solid rgba(239,68,68,.35)}
 
-    .kpi{
-      display:flex; flex-direction:column; gap:2px; padding:12px; border-radius:12px;
-      background:rgba(255,255,255,.05); border:1px dashed rgba(255,255,255,.14);
-    }
-    .kpi .label{font-size:12px; color:var(--muted)}
-    .kpi .val{font-size:20px; font-weight:900}
+   /* KPI cards: darker translucent */
+.kpi {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(0,0,0,0.55); /* darker than before */
+  border:1px dashed rgba(255,255,255,.15);
+}
+.kpi .label {
+  font-size:12px;
+  color:#f0f0f0; /* white-ish labels */
+}
+.kpi .val {
+  font-size:22px;
+  font-weight:900;
+  color:#ffffff; /* ensure values are white */
+}
 
     .hr{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); margin:12px 0}
 
